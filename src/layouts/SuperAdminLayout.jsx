@@ -28,6 +28,29 @@ export default function SuperAdminLayout() {
         navigate("/login");
     }
 
+    const nav = [{
+        title: 'Dashboard',
+        route: '/super-admin/dashboard',
+        icon: <LayoutDashboard size={18} />
+
+    },
+    {
+        title: 'Institutes',
+        route: '/super-admin/institutes',
+        icon: <Building2 size={18} />
+    }, {
+        title: 'Plans',
+        route: "/super-admin/plans",
+        icon: <CreditCard size={18} />
+
+    },
+    {
+        title: 'Subscription Plans',
+        route: "/super-admin/subscriptions",
+        icon: <CreditCard size={18} />
+    },
+    ]
+
     return (
         <div className="admin-layout">
 
@@ -42,15 +65,17 @@ export default function SuperAdminLayout() {
                 </div>
 
                 <nav>
+                    {nav?.map(item => {
+                        return <NavLink
+                            to={item?.route}
+                        >
+                            {item?.icon}
+                            {item?.title}
+                        </NavLink>
+                    })}
 
-                    <NavLink
-                        to="/super-admin/dashboard"
-                    >
-                        <LayoutDashboard size={18} />
-                        Dashboard
-                    </NavLink>
 
-                    <NavLink
+                    {/* <NavLink
                         to="/super-admin/institutes"
                     >
                         <Building2 size={18} />
@@ -62,7 +87,7 @@ export default function SuperAdminLayout() {
                     >
                         <CreditCard size={18} />
                         Subscription Plans
-                    </NavLink>
+                    </NavLink> */}
 
                 </nav>
 

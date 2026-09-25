@@ -25,6 +25,11 @@ import Plans
 import InstituteDashboard
   from "./pages/institute/Dashboard";
 
+import Students from "./pages/institute/Students";
+import Courses from "./pages/institute/Courses";
+import Batches from "./pages/institute/Batches";
+import Subscription from "./pages/institute/Subscription";
+import Subscriptions from "./pages/super-admin/Subscriptions";
 
 function ProtectedRole({
   role,
@@ -119,6 +124,15 @@ export default function App() {
             }
           />
 
+          {/* <Route
+            path="subscription"
+            element={
+              <Subscription />
+            }
+          /> */}
+
+          <Route path="subscriptions" element={<Subscriptions />} />
+
         </Route>
 
 
@@ -150,6 +164,30 @@ export default function App() {
             path="dashboard"
             element={
               <InstituteDashboard />
+            }
+          />
+
+          <Route
+            path="students"
+            element={<Students />}
+          />
+
+          <Route
+            path="courses"
+            element={<Courses />}
+          />
+
+          <Route
+            path="batches"
+            element={<Batches />}
+          />
+
+          <Route
+            path="/institute/subscription"
+            element={
+              // <ProtectedRole allowedRoles={["INSTITUTE_ADMIN"]}>
+              <Subscription />
+              // </ProtectedRole>
             }
           />
 
