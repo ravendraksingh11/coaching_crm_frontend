@@ -3,6 +3,8 @@ import {
     getBatches,
     createBatch,
     getCourses,
+    updateBatch,
+    deleteBatch,
 } from "../../api/institute.api";
 
 export default function Batches() {
@@ -14,8 +16,9 @@ export default function Batches() {
         courseId: "",
         startDate: "",
         endDate: "",
-        capacity: "",
-        timing: "",
+        startTime: "",
+        endTime: "",
+        roomNumber: "",
     });
 
     const [loading, setLoading] = useState(true);
@@ -32,9 +35,6 @@ export default function Batches() {
                 getBatches(),
             ]);
 
-            console.log("Courses API:", coursesResponse);
-            console.log("Batches API:", batchesResponse);
-            console.log("coursesResponse", coursesResponse)
             setCourses(coursesResponse?.data || []);
             setBatches(batchesResponse?.data || []);
         } catch (err) {
@@ -78,10 +78,9 @@ export default function Batches() {
                 courseId: form.courseId || null,
                 startDate: form.startDate || null,
                 endDate: form.endDate || null,
-                capacity: form.capacity
-                    ? Number(form.capacity)
-                    : null,
-                timing: form.timing || null,
+                startTime: form.startTime || null,
+                endTime: form.endTime || null,
+                roomNumber: form.roomNumber || null,
             });
 
             setForm({
@@ -89,8 +88,9 @@ export default function Batches() {
                 courseId: "",
                 startDate: "",
                 endDate: "",
-                capacity: "",
-                timing: "",
+                startTime: "",
+                endTime: "",
+                roomNumber: "",
             });
 
             await loadData();
@@ -116,13 +116,7 @@ export default function Batches() {
         if (!confirmed) return;
 
         try {
-            await fetch(`/api/institute/batches/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-
+            await deleteBatch(id);
             await loadData();
         } catch (err) {
             console.error("Delete batch error:", err);
@@ -224,28 +218,28 @@ export default function Batches() {
                 </div>
 
                 <div style={{ marginBottom: "12px" }}>
-                    <label>Capacity</label>
+                    <label>Start time</label>
                     <br />
                     <input
-                        type="number"
-                        name="capacity"
-                        value={form.capacity}
+                        type="time"
+                        name="startTime"
+                        value={form.startTime}
                         onChange={handleChange}
                         placeholder="e.g. 50"
                     />
                 </div>
 
                 <div style={{ marginBottom: "12px" }}>
-                    <label>Timing</label>
+                    <label>End time</label>
                     <br />
                     <input
-                        type="text"
-                        name="timing"
-                        value={form.timing}
+                        type="time"
+                        name="endTime"
+                        value={form.endTime}
                         onChange={handleChange}
-                        placeholder="e.g. 8:00 AM - 10:00 AM"
                     />
                 </div>
+                <div style={{ marginBottom: "12px" }}><label>Room number</label><br /><input name="roomNumber" value={form.roomNumber} onChange={handleChange} /></div>
 
                 <button type="submit" disabled={saving}>
                     {saving ? "Creating..." : "Create Batch"}
@@ -268,8 +262,8 @@ export default function Batches() {
                         <tr>
                             <th>Batch</th>
                             <th>Course</th>
-                            <th>Timing</th>
-                            <th>Capacity</th>
+                            <th>Schedule</th>
+                            <th>Room</th>
                             <th>Students</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -285,20 +279,25 @@ export default function Batches() {
                                     {batch.course_name || "No Course"}
                                 </td>
 
-                                <td>{batch.timing || "-"}</td>
+                                <td>{[batch.start_time, batch.end_time].filter(Boolean).join(" – ") || "-"}</td>
 
-                                <td>{batch.capacity || "-"}</td>
+                                <td>{batch.room_number || "-"}</td>
 
                                 <td>{batch.student_count || 0}</td>
 
                                 <td>{batch.status}</td>
 
                                 <td>
-                                    <button
+                                    <div className="action-row"><button type="button" className="secondary-button" onClick={async () => {
+                                        const name = window.prompt("Batch name", batch.name); if (name === null) return;
+                                        try { await updateBatch(batch.id, { name }); await loadData(); }
+                                        catch (err) { alert(err?.response?.data?.message || "Could not update batch"); }
+                                    }}>Edit</button><button
                                         onClick={() => handleDelete(batch.id)}
+                                        className="danger-button"
                                     >
                                         Delete
-                                    </button>
+                                    </button></div>
                                 </td>
                             </tr>
                         ))}

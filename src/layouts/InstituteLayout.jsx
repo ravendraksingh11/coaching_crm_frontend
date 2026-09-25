@@ -7,17 +7,9 @@ import {
 import {
     LayoutDashboard,
     Users,
-    UserCheck,
-    UserRound,
     BookOpen,
     Layers,
-    IndianRupee,
-    CalendarCheck,
     FileText,
-    Trophy,
-    FolderOpen,
-    Bell,
-    BarChart3,
     CreditCard,
     Settings,
     LogOut,
@@ -52,16 +44,6 @@ export default function InstituteLayout() {
             icon: <Users />,
         },
         {
-            path: "/institute/parents",
-            label: "Parents",
-            icon: <UserRound />,
-        },
-        {
-            path: "/institute/teachers",
-            label: "Teachers",
-            icon: <UserCheck />,
-        },
-        {
             path: "/institute/courses",
             label: "Courses",
             icon: <BookOpen />,
@@ -72,44 +54,9 @@ export default function InstituteLayout() {
             icon: <Layers />,
         },
         {
-            path: "/institute/fees",
-            label: "Fees",
-            icon: <IndianRupee />,
-        },
-        {
-            path: "/institute/payments",
-            label: "Payments",
-            icon: <IndianRupee />,
-        },
-        {
-            path: "/institute/attendance",
-            label: "Attendance",
-            icon: <CalendarCheck />,
-        },
-        {
             path: "/institute/tests",
             label: "Tests",
             icon: <FileText />,
-        },
-        {
-            path: "/institute/results",
-            label: "Results",
-            icon: <Trophy />,
-        },
-        {
-            path: "/institute/materials",
-            label: "Study Material",
-            icon: <FolderOpen />,
-        },
-        {
-            path: "/institute/notifications",
-            label: "Notifications",
-            icon: <Bell />,
-        },
-        {
-            path: "/institute/reports",
-            label: "Reports",
-            icon: <BarChart3 />,
         },
         {
             path: "/institute/subscription",

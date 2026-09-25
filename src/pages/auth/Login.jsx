@@ -57,7 +57,8 @@ export default function Login() {
         navigate(
           "/institute/dashboard"
         );
-        console.log("navigatenavigate")
+      } else if (result.data.user.role === "STUDENT") {
+        navigate("/student/tests");
       } else {
         setError(
           "This dashboard is not available yet."

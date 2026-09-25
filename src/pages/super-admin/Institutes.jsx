@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import {
   getInstitutes,
   createInstitute,
+  updateInstitute,
+  updateInstituteStatus,
+  deleteInstitute,
 } from "../../api/superAdmin.api";
 
 export default function Institutes() {
@@ -36,9 +39,7 @@ export default function Institutes() {
       const result =
         await getInstitutes();
 
-      setInstitutes(
-        result.data
-      );
+      setInstitutes(result.data || []);
     } catch (error) {
       console.error(error);
     }
@@ -88,7 +89,7 @@ export default function Institutes() {
 
       setShowForm(false);
 
-      loadInstitutes();
+      await loadInstitutes();
 
     } catch (error) {
       alert(
@@ -294,6 +295,7 @@ export default function Institutes() {
               <th>Teachers</th>
               <th>Plan</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
 
           </thead>
@@ -356,6 +358,23 @@ export default function Institutes() {
                       }
                     </span>
                   </td>
+                  <td><div className="action-row">
+                    <button type="button" className="secondary-button" onClick={async () => {
+                      const name = window.prompt("Institute name", institute.name); if (name === null) return;
+                      try { await updateInstitute(institute.id, { name }); await loadInstitutes(); }
+                      catch (error) { alert(error.response?.data?.message || "Could not update institute"); }
+                    }}>Edit name</button>
+                    <button type="button" className="secondary-button" onClick={async () => {
+                      const status = institute.status === "SUSPENDED" ? "ACTIVE" : "SUSPENDED";
+                      try { await updateInstituteStatus(institute.id, status); await loadInstitutes(); }
+                      catch (error) { alert(error.response?.data?.message || "Could not update status"); }
+                    }}>{institute.status === "SUSPENDED" ? "Restore" : "Suspend"}</button>
+                    <button type="button" className="danger-button" onClick={async () => {
+                      if (!window.confirm(`Delete ${institute.name} and its tenant data?`)) return;
+                      try { await deleteInstitute(institute.id); await loadInstitutes(); }
+                      catch (error) { alert(error.response?.data?.message || "Could not delete institute"); }
+                    }}>Delete</button>
+                  </div></td>
 
                 </tr>
 

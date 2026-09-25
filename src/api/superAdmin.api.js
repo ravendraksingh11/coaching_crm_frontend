@@ -22,6 +22,21 @@ export async function getInstitutes() {
   return response.data;
 }
 
+export async function updateInstitute(id, data) {
+  const response = await api.put(`/super-admin/institutes/${id}`, data);
+  return response.data;
+}
+
+export async function updateInstituteStatus(id, status) {
+  const response = await api.patch(`/super-admin/institutes/${id}/status`, { status });
+  return response.data;
+}
+
+export async function deleteInstitute(id) {
+  const response = await api.delete(`/super-admin/institutes/${id}`);
+  return response.data;
+}
+
 
 // Create institute
 export async function createInstitute(
@@ -54,10 +69,20 @@ export async function createPlan(
 ) {
   const response =
     await api.post(
-      "/subscription-plans",
+      "/super-admin/plans",
       data
     );
 
+  return response.data;
+}
+
+export async function updatePlan(id, data) {
+  const response = await api.put(`/super-admin/plans/${id}`, data);
+  return response.data;
+}
+
+export async function deletePlan(id) {
+  const response = await api.delete(`/super-admin/plans/${id}`);
   return response.data;
 }
 
@@ -73,5 +98,10 @@ export async function assignSubscription(
       data
     );
 
+  return response.data;
+}
+
+export async function assignLegacySubscription(instituteId, data) {
+  const response = await api.post(`/subscriptions/institutes/${instituteId}`, data);
   return response.data;
 }

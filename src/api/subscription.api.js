@@ -1,14 +1,12 @@
 import api from "./axios";
 
-const API_URL = "http://localhost:5000/api/subscriptions";
-
 // ========================================
 // SUPER ADMIN
 // GET ALL SUBSCRIPTIONS
 // ========================================
 
 export const getAllSubscriptions = async () => {
-    const response = api.get('/subscriptions');
+    const response = await api.get('/subscriptions');
     return response.data;
 };
 
@@ -18,7 +16,7 @@ export const getAllSubscriptions = async () => {
 // ========================================
 
 export const activateSubscription = async (data) => {
-    const response = api.post('/subscriptions/activate', data);
+    const response = await api.post('/subscriptions/activate', data);
     return response.data;
 };
 
@@ -28,7 +26,7 @@ export const activateSubscription = async (data) => {
 // ========================================
 
 export const getMySubscription = async () => {
-    const response = api.get('/subscriptions/my');
+    const response = await api.get('/subscriptions/my');
     return response.data;
 };
 
@@ -38,6 +36,6 @@ export const getMySubscription = async () => {
 // ========================================
 
 export const purchaseSubscription = async (planId) => {
-    const response = api.post('/subscriptions/purchase', { planId });
+    const response = await api.post('/subscriptions/purchase', { planId });
     return response.data;
 };

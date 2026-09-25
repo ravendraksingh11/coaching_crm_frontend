@@ -30,6 +30,10 @@ import Courses from "./pages/institute/Courses";
 import Batches from "./pages/institute/Batches";
 import Subscription from "./pages/institute/Subscription";
 import Subscriptions from "./pages/super-admin/Subscriptions";
+import StudentLayout from "./layouts/StudentLayout";
+import StudentTests from "./pages/student/Tests";
+import StudentTest from "./pages/student/Test";
+import InstituteTests from "./pages/institute/Tests";
 
 function ProtectedRole({
   role,
@@ -135,6 +139,12 @@ export default function App() {
 
         </Route>
 
+        <Route path="/student" element={<ProtectedRole role="STUDENT"><StudentLayout /></ProtectedRole>}>
+          <Route index element={<Navigate to="tests" replace />} />
+          <Route path="tests" element={<StudentTests />} />
+          <Route path="tests/:id" element={<StudentTest />} />
+        </Route>
+
 
         {/* ============================
             INSTITUTE ADMIN
@@ -182,8 +192,10 @@ export default function App() {
             element={<Batches />}
           />
 
+          <Route path="tests" element={<InstituteTests />} />
+
           <Route
-            path="/institute/subscription"
+            path="subscription"
             element={
               // <ProtectedRole allowedRoles={["INSTITUTE_ADMIN"]}>
               <Subscription />

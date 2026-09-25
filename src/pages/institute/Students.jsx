@@ -4,6 +4,8 @@ import {
     getStudents,
     getBatches,
     createStudent,
+    updateStudent,
+    deleteStudent,
 } from "../../api/institute.api";
 
 export default function Students() {
@@ -190,6 +192,7 @@ export default function Students() {
                         <th>Phone</th>
                         <th>Course</th>
                         <th>Batch</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 
@@ -208,6 +211,19 @@ export default function Students() {
                             <td>
                                 {student.batch_name || "-"}
                             </td>
+                            <td><div className="action-row">
+                                <button type="button" className="secondary-button" onClick={async () => {
+                                    const name = window.prompt("Student name", student.name); if (name === null) return;
+                                    const admissionNumber = window.prompt("Admission number", student.admission_number); if (admissionNumber === null) return;
+                                    try { await updateStudent(student.id, { name, admissionNumber }); await loadData(); }
+                                    catch (error) { alert(error.response?.data?.message || "Could not update student"); }
+                                }}>Edit</button>
+                                <button type="button" className="danger-button" onClick={async () => {
+                                    if (!window.confirm(`Delete ${student.name}?`)) return;
+                                    try { await deleteStudent(student.id); await loadData(); }
+                                    catch (error) { alert(error.response?.data?.message || "Could not delete student"); }
+                                }}>Delete</button>
+                            </div></td>
                         </tr>
                     ))}
                 </tbody>

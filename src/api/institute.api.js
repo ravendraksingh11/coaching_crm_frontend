@@ -55,6 +55,11 @@ export async function deleteCourse(id) {
     return response.data;
 }
 
+export async function updateCourse(id, data) {
+    const response = await api.put(`/institute/courses/${id}`, data);
+    return response.data;
+}
+
 
 // Batches
 
@@ -80,5 +85,50 @@ export async function deleteBatch(id) {
         `/institute/batches/${id}`
     );
 
+    return response.data;
+}
+
+export async function updateBatch(id, data) {
+    const response = await api.put(`/institute/batches/${id}`, data);
+    return response.data;
+}
+
+export async function updateStudent(id, data) {
+    const response = await api.put(`/institute/students/${id}`, data);
+    return response.data;
+}
+
+export async function deleteStudent(id) {
+    const response = await api.delete(`/institute/students/${id}`);
+    return response.data;
+}
+
+export async function createTest(data) {
+    const response = await api.post('/tests', data);
+    return response.data;
+}
+
+export async function getLatestToppers() {
+    const response = await api.get('/tests/toppers/latest');
+    return response.data;
+}
+
+export async function deactivateTest(id) {
+    const response = await api.patch(`/tests/${id}/deactivate`);
+    return response.data;
+}
+
+export async function getMyTests() {
+    const response = await api.get('/tests/my');
+    return response.data;
+}
+
+export async function getAssignedTest(id) {
+    const response = await api.get(`/tests/${id}`);
+    return response.data;
+}
+
+export async function submitAssignedTest(id, answers) {
+    const response = await api.post(`/tests/${id}/submit`, { answers });
     return response.data;
 }

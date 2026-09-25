@@ -6,6 +6,8 @@ import {
 import {
   getPlans,
   createPlan,
+  updatePlan,
+  deletePlan,
 } from "../../api/superAdmin.api";
 
 export default function Plans() {
@@ -15,6 +17,7 @@ export default function Plans() {
 
   const [showForm, setShowForm] =
     useState(false);
+  const [editing, setEditing] = useState(null);
 
   const [form, setForm] =
     useState({
@@ -32,7 +35,7 @@ export default function Plans() {
       const result =
         await getPlans();
 
-      setPlans(result.data);
+      setPlans(result.data || []);
     } catch (error) {
       console.error(error);
     }
@@ -58,7 +61,7 @@ export default function Plans() {
 
     try {
 
-      await createPlan({
+      const payload = {
         ...form,
 
         price:
@@ -78,7 +81,9 @@ export default function Plans() {
           Number(
             form.teacherLimit
           ),
-      });
+      };
+      if (editing) await updatePlan(editing.id, payload);
+      else await createPlan(payload);
 
       alert(
         "Plan created successfully"
@@ -94,6 +99,7 @@ export default function Plans() {
       });
 
       setShowForm(false);
+      setEditing(null);
 
       loadPlans();
 
@@ -141,7 +147,7 @@ export default function Plans() {
         <div className="form-card">
 
           <h2>
-            Create Subscription Plan
+            {editing ? "Edit Subscription Plan" : "Create Subscription Plan"}
           </h2>
 
           <form
@@ -227,7 +233,7 @@ export default function Plans() {
             </div>
 
             <button type="submit">
-              Create Plan
+              {editing ? "Save changes" : "Create Plan"}
             </button>
 
           </form>
@@ -261,6 +267,13 @@ export default function Plans() {
               <p>
                 {plan.description}
               </p>
+
+              <p>Status: {plan.is_active ? "Active" : "Inactive"}</p>
+              <div className="action-row">
+                <button type="button" onClick={() => { setEditing(plan); setForm({ name: plan.name || "", description: plan.description || "", price: plan.price ?? "", durationMonths: plan.duration_months ?? 1, studentLimit: plan.student_limit ?? "", teacherLimit: plan.teacher_limit ?? 10 }); setShowForm(true); }}>Edit</button>
+                <button type="button" className="danger-button" onClick={async () => { if (!window.confirm(`Delete ${plan.name}?`)) return; try { await deletePlan(plan.id); await loadPlans(); } catch (e) { alert(e.response?.data?.message || "Could not delete plan"); } }}>Delete</button>
+                <button type="button" className="secondary-button" onClick={async () => { try { await updatePlan(plan.id, { isActive: !plan.is_active }); await loadPlans(); } catch (e) { alert(e.response?.data?.message || "Could not update plan"); } }}>{plan.is_active ? "Deactivate" : "Activate"}</button>
+              </div>
 
               <hr />
 
