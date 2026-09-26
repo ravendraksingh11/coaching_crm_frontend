@@ -11,7 +11,7 @@ export default function StudentLayout() {
   }
   return <div className="admin-layout">
     <aside className="sidebar">
-      <div className="logo">Coaching SaaS</div>
+      <div className="logo">Live Coach CRM</div>
       <div className="role">STUDENT</div>
       <nav><NavLink to="/student/tests"><ClipboardList /><span>My Tests</span></NavLink></nav>
       <button className="logout" onClick={logout}><LogOut size={18} />Logout</button>

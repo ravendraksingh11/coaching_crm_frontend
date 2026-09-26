@@ -118,7 +118,7 @@ export default function Dashboard() {
           </h1>
 
           <p>
-            Welcome to Coaching SaaS
+            Welcome to Live Coach CRM
             Super Admin Panel
           </p>
         </div>

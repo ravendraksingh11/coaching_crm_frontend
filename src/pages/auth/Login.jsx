@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { logo } from '../../assets'
 import { login } from "../../api/auth.api";
 
 export default function Login() {
@@ -79,9 +79,7 @@ export default function Login() {
     <div className="login-page">
       <div className="login-card">
 
-        <h1>
-          Coaching SaaS
-        </h1>
+        <img src={logo} />
 
         {error && (
           <div className="error">

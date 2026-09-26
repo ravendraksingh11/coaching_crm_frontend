@@ -93,7 +93,7 @@ export default function Courses() {
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
-                            <th>Batches</th><th>Actions</th>
+                        <th>Batches</th><th>Actions</th>
                     </tr>
                 </thead>
 

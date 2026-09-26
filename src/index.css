@@ -70,6 +70,10 @@ input[type="radio"] { width: auto; }
   border-radius: 14px;
   box-shadow: 0 10px 30px #00000012;
 }
+.login-card img{
+  width: 200px;
+  align-self: center;
+}
 
 .login-card h1 {
   margin-bottom: 5px;
