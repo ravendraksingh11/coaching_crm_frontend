@@ -5,6 +5,10 @@ import {
   getStudents,
   getLatestToppers,
   deactivateTest,
+  getInstituteTests,
+  getInstituteTest,
+  updateInstituteTest,
+  deleteInstituteTest,
 } from "../../api/institute.api";
 
 const emptyQuestion = () => ({
@@ -21,7 +25,9 @@ export default function Tests() {
   const [batches, setBatches] = useState([]);
   const [students, setStudents] = useState([]);
   const [toppers, setToppers] = useState([]);
-  const [createdTests, setCreatedTests] = useState([]);
+  const [tests, setTests] = useState([]);
+  const [editingTestId, setEditingTestId] = useState(null);
+  const [selectedTest, setSelectedTest] = useState(null);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -29,25 +35,29 @@ export default function Tests() {
     durationMinutes: "",
     testDate: "",
     dueDate: "",
+    screenRecording: false,
+    autoSubmitOnLeave: false,
     batchId: "",
     studentId: "",
   });
   const [questions, setQuestions] = useState(
-    Array.from({ length: 50 }, emptyQuestion),
+    [emptyQuestion()],
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   async function load() {
     try {
-      const [b, s, t] = await Promise.all([
+      const [b, s, t, testList] = await Promise.all([
         getBatches(),
         getStudents(),
         getLatestToppers(),
+        getInstituteTests(),
       ]);
       setBatches(b.data || []);
       setStudents(s.data || []);
       setToppers(t.data || []);
+      setTests(testList.data || []);
     } catch (e) {
       setError(e.response?.data?.message || "Could not load test data");
     }
@@ -81,13 +91,13 @@ export default function Tests() {
       )
     ) {
       setError(
-        "Complete the question and all four options for all 50 questions.",
+        "Complete the question and all four options for all questions.",
       );
       return;
     }
     try {
       setSaving(true);
-      const created = await createTest({
+      const payload = {
         ...form,
         totalMarks: Number(form.totalMarks),
         durationMinutes: form.durationMinutes
@@ -96,8 +106,11 @@ export default function Tests() {
         batchId: form.batchId || null,
         studentId: form.studentId || null,
         questions: questions.map((q) => ({ ...q, marks: Number(q.marks) })),
-      });
-      setCreatedTests((current) => [created.data, ...current]);
+      };
+      if (editingTestId) await updateInstituteTest(editingTestId, payload);
+      else await createTest(payload);
+      setEditingTestId(null);
+      setSelectedTest(null);
       setForm({
         title: "",
         description: "",
@@ -105,16 +118,62 @@ export default function Tests() {
         durationMinutes: "",
         testDate: "",
         dueDate: "",
+        screenRecording: false,
+        autoSubmitOnLeave: false,
         batchId: "",
         studentId: "",
       });
-      setQuestions(Array.from({ length: 50 }, emptyQuestion));
-      alert("Test created and assigned");
+      setQuestions([emptyQuestion()]);
+      alert(editingTestId ? "Test updated" : "Test created and assigned");
       await load();
     } catch (e) {
       setError(e.response?.data?.message || "Could not create test");
     } finally {
       setSaving(false);
+    }
+  }
+  async function viewTest(id) {
+    setError("");
+    try {
+      const result = await getInstituteTest(id);
+      setSelectedTest(result.data);
+    } catch (e) {
+      setError(e.response?.data?.message || "Could not load test details");
+    }
+  }
+  async function editTest(id) {
+    setError("");
+    try {
+      const { data: test } = await getInstituteTest(id);
+      const assignment = test.assignments?.[0] || {};
+      setForm({
+        title: test.title || "", description: test.description || "",
+        totalMarks: test.total_marks, durationMinutes: test.duration_minutes || "",
+        testDate: test.test_date ? String(test.test_date).slice(0, 10) : "",
+        dueDate: assignment.dueDate ? String(assignment.dueDate).slice(0, 10) : "",
+        batchId: assignment.batchId || "", studentId: assignment.studentId || "",
+        screenRecording: test.screen_recording, autoSubmitOnLeave: test.auto_submit_on_leave,
+      });
+      setQuestions((test.questions || []).map((q) => ({
+        question: q.question, optionA: q.option_a || "", optionB: q.option_b || "",
+        optionC: q.option_c || "", optionD: q.option_d || "",
+        correctOption: q.correct_option || "A", marks: q.marks || 1,
+      })));
+      setEditingTestId(test.id);
+      setSelectedTest(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) {
+      setError(e.response?.data?.message || "Could not load test for editing");
+    }
+  }
+  async function removeTest(id) {
+    if (!window.confirm("Permanently delete this test and its questions and results?")) return;
+    try {
+      await deleteInstituteTest(id);
+      setSelectedTest(null);
+      await load();
+    } catch (e) {
+      setError(e.response?.data?.message || "Could not delete test");
     }
   }
   async function closeTest(id) {
@@ -126,7 +185,7 @@ export default function Tests() {
       return;
     try {
       await deactivateTest(id);
-      setCreatedTests((current) => current.filter((test) => test.id !== id));
+      await load();
     } catch (e) {
       setError(e.response?.data?.message || "Could not deactivate test");
     }
@@ -136,7 +195,7 @@ export default function Tests() {
       <div className="page-header">
         <div>
           <h1>Tests</h1>
-          <p>Create a 50 question test and assign it to a batch or student.</p>
+          <p>Create a test with as many questions as you need and assign it to a batch or student.</p>
         </div>
       </div>
       {error && <div className="error">{error}</div>}
@@ -169,24 +228,19 @@ export default function Tests() {
           <p>No test results available yet.</p>
         )}
       </div>
-      {createdTests.length > 0 && (
-        <div className="dashboard-card">
-          <h2>Tests created this session</h2>
-          {createdTests.map((test) => (
-            <div className="action-row" key={test.id}>
-              <span>{test.title}</span>
-              <button
-                className="danger-button"
-                onClick={() => closeTest(test.id)}
-              >
-                Deactivate
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="dashboard-card">
+        <h2>Created tests</h2>
+        {tests.length ? <div className="table-card"><table><thead><tr><th>Test</th><th>Questions</th><th>Duration</th><th>Submissions</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+          {tests.map((test) => <tr key={test.id}>
+            <td><strong>{test.title}</strong><small>{test.description || ""}</small></td>
+            <td>{test.question_count}</td><td>{test.duration_minutes} min</td><td>{test.submission_count}</td><td>{test.status}</td>
+            <td><div className="action-row"><button type="button" onClick={() => viewTest(test.id)}>View</button><button type="button" onClick={() => editTest(test.id)} disabled={Number(test.submission_count) > 0 || Number(test.attempt_count) > 0}>Edit</button><button type="button" className="danger-button" onClick={() => removeTest(test.id)}>Delete</button>{test.status === "ACTIVE" && <button type="button" className="danger-button" onClick={() => closeTest(test.id)}>Deactivate</button>}</div></td>
+          </tr>)}
+        </tbody></table></div> : <p>No tests created yet.</p>}
+      </div>
+      {selectedTest && <div className="dashboard-card"><div className="action-row"><h2>{selectedTest.title}</h2><button type="button" onClick={() => setSelectedTest(null)}>Close</button></div><p>{selectedTest.description || "No description"}</p><p>{selectedTest.total_marks} marks · {selectedTest.duration_minutes} minutes · {selectedTest.status}</p><h3>Questions</h3>{selectedTest.questions?.map((q, index) => <section className="question-editor" key={q.id}><strong>{index + 1}. {q.question}</strong><p>A. {q.option_a} · B. {q.option_b} · C. {q.option_c} · D. {q.option_d}</p><small>Correct: {q.correct_option} · {q.marks} marks</small></section>)}</div>}
       <form onSubmit={submit} className="dashboard-card">
-        <h2>Create test</h2>
+        <h2>{editingTestId ? "Edit test" : "Create test"}</h2>
         <div className="form-grid">
           <input
             required
@@ -208,6 +262,7 @@ export default function Tests() {
             onChange={(e) => setForm({ ...form, totalMarks: e.target.value })}
           />
           <input
+            required
             type="number"
             min="1"
             placeholder="Duration (minutes)"
@@ -261,6 +316,10 @@ export default function Tests() {
             </select>
           </label>
         </div>
+        <div className="form-grid">
+          <label><input type="checkbox" checked={form.screenRecording} onChange={(e) => setForm({ ...form, screenRecording: e.target.checked })} /> Require screen recording</label>
+          <label><input type="checkbox" checked={form.autoSubmitOnLeave} onChange={(e) => setForm({ ...form, autoSubmitOnLeave: e.target.checked })} /> Auto-submit if student changes tab or leaves</label>
+        </div>
         <div className="question-list">
           {questions.map((q, i) => (
             <section className="question-editor" key={i}>
@@ -307,8 +366,10 @@ export default function Tests() {
             </section>
           ))}
         </div>
+        <button type="button" onClick={() => setQuestions((current) => [...current, emptyQuestion()])}>Add question</button>
+        {editingTestId && <button type="button" className="secondary-link" onClick={() => { setEditingTestId(null); setQuestions([emptyQuestion()]); setError(""); }}>Cancel edit</button>}
         <button disabled={saving}>
-          {saving ? "Creating…" : "Create and assign test"}
+          {saving ? "Saving…" : editingTestId ? "Save changes" : "Create and assign test"}
         </button>
       </form>
     </div>

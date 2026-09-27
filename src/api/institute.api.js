@@ -118,8 +118,33 @@ export async function deactivateTest(id) {
     return response.data;
 }
 
+export async function getInstituteTests() {
+    const response = await api.get("/tests/manage");
+    return response.data;
+}
+
+export async function getInstituteTest(id) {
+    const response = await api.get(`/tests/manage/${id}`);
+    return response.data;
+}
+
+export async function updateInstituteTest(id, data) {
+    const response = await api.put(`/tests/${id}`, data);
+    return response.data;
+}
+
+export async function deleteInstituteTest(id) {
+    const response = await api.delete(`/tests/${id}`);
+    return response.data;
+}
+
 export async function getMyTests() {
     const response = await api.get('/tests/my');
+    return response.data;
+}
+
+export async function startAssignedTest(id) {
+    const response = await api.post(`/tests/${id}/start`);
     return response.data;
 }
 

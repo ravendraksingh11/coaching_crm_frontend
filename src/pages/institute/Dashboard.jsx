@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   useEffect,
   useState,
@@ -178,6 +179,8 @@ export default function Dashboard() {
 
       </div>
 
+
+      <div className="dashboard-card"><h2>Tests</h2><p>Create tests, review questions, and manage assignments.</p><Link className="button-link" to="/institute/tests">Manage tests</Link></div>
 
       <div className="dashboard-grid">
 
