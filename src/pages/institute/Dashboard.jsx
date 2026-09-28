@@ -179,7 +179,7 @@ export default function Dashboard() {
 
       </div>
 
-
+      <br />
       <div className="dashboard-card"><h2>Attendance</h2><p>Schedule class sessions and take batch attendance.</p><Link className="button-link" to="/institute/attendance">Manage attendance</Link></div>
 
       <div className="dashboard-card"><h2>Tests</h2><p>Create tests, review questions, and manage assignments.</p><Link className="button-link" to="/institute/tests">Manage tests</Link></div>

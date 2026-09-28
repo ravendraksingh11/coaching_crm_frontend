@@ -15,11 +15,25 @@ import {
     Settings,
     LogOut,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function InstituteLayout() {
 
     const navigate =
         useNavigate();
+    const [instituteName, setInstituteName] = useState(() => {
+        const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        return savedUser.instituteName || "Institute Admin";
+    });
+
+    useEffect(() => {
+        function syncInstituteName() {
+            const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+            setInstituteName(savedUser.instituteName || "Institute Admin");
+        }
+        window.addEventListener("institute-name-updated", syncInstituteName);
+        return () => window.removeEventListener("institute-name-updated", syncInstituteName);
+    }, []);
 
     function logout() {
         localStorage.removeItem(
@@ -133,7 +147,7 @@ export default function InstituteLayout() {
                 <header className="topbar">
 
                     <div>
-                        Institute Admin
+                        {instituteName}
                     </div>
 
                     <div>

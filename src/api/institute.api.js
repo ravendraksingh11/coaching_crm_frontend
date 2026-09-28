@@ -1,4 +1,20 @@
 import api from "./axios";
+
+export async function getInstituteSettings() {
+    const response = await api.get("/institute/settings");
+    return response.data;
+}
+
+export async function updateInstituteName(name) {
+    const response = await api.put("/institute/settings/name", { name });
+    return response.data;
+}
+
+export async function updateInstitutePassword(data) {
+    const response = await api.put("/institute/settings/password", data);
+    return response.data;
+}
+
 export async function getDashboard() {
     const response =
         await api.get(
@@ -24,6 +40,11 @@ export async function createStudent(data) {
         data
     );
 
+    return response.data;
+}
+
+export async function getNextAdmissionNumber() {
+    const response = await api.get("/institute/students/admission-number/next");
     return response.data;
 }
 

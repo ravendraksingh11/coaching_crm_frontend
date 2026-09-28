@@ -32,6 +32,7 @@ import CreateCourse from "./pages/institute/CreateCourse";
 import Batches from "./pages/institute/Batches";
 import CreateBatch from "./pages/institute/CreateBatch";
 import Subscription from "./pages/institute/Subscription";
+import Settings from "./pages/institute/Settings";
 import Subscriptions from "./pages/super-admin/Subscriptions";
 import StudentLayout from "./layouts/StudentLayout";
 import ParentLayout from "./layouts/ParentLayout";
@@ -42,6 +43,8 @@ import StudentAttendance from "./pages/student/Attendance";
 import ParentAttendance from "./pages/parent/Attendance";
 import InstituteTests from "./pages/institute/Tests";
 import InstituteAttendance from "./pages/institute/Attendance";
+import CreateAttendanceSession from "./pages/institute/CreateAttendanceSession";
+import TakeAttendance from "./pages/institute/TakeAttendance";
 
 function ProtectedRole({
   role,
@@ -150,6 +153,8 @@ export default function App() {
         <Route path="/teacher" element={<ProtectedRole role="TEACHER"><TeacherLayout /></ProtectedRole>}>
           <Route index element={<Navigate to="attendance" replace />} />
           <Route path="attendance" element={<InstituteAttendance />} />
+          <Route path="attendance/create" element={<CreateAttendanceSession />} />
+          <Route path="attendance/session/:id" element={<TakeAttendance />} />
         </Route>
 
         <Route path="/parent" element={<ProtectedRole role="PARENT"><ParentLayout /></ProtectedRole>}>
@@ -217,6 +222,9 @@ export default function App() {
           <Route path="tests" element={<InstituteTests />} />
           <Route path="tests/create" element={<InstituteTests createMode />} />
           <Route path="attendance" element={<InstituteAttendance />} />
+          <Route path="attendance/create" element={<CreateAttendanceSession />} />
+          <Route path="attendance/session/:id" element={<TakeAttendance />} />
+          <Route path="settings" element={<Settings />} />
 
           <Route
             path="subscription"
