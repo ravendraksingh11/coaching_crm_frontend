@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { ClipboardList, LogOut } from "lucide-react";
+import { ClipboardList, CalendarCheck, LogOut } from "lucide-react";
 
 export default function StudentLayout() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function StudentLayout() {
     <aside className="sidebar">
       <div className="logo">Live Coach CRM</div>
       <div className="role">STUDENT</div>
-      <nav><NavLink to="/student/tests"><ClipboardList /><span>My Tests</span></NavLink></nav>
+      <nav><NavLink to="/student/tests"><ClipboardList /><span>My Tests</span></NavLink><NavLink to="/student/attendance"><CalendarCheck /><span>My Attendance</span></NavLink></nav>
       <button className="logout" onClick={logout}><LogOut size={18} />Logout</button>
     </aside>
     <main className="main-content">

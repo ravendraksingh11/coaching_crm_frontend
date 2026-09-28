@@ -138,6 +138,51 @@ export async function deleteInstituteTest(id) {
     return response.data;
 }
 
+export async function getTeachers() {
+    const response = await api.get("/institute/teachers");
+    return response.data;
+}
+
+export async function createAttendanceSession(data) {
+    const response = await api.post("/attendance/sessions", data);
+    return response.data;
+}
+
+export async function getAttendanceSessions(params = {}) {
+    const response = await api.get("/attendance/sessions", { params });
+    return response.data;
+}
+
+export async function getAttendanceSession(id) {
+    const response = await api.get(`/attendance/sessions/${id}`);
+    return response.data;
+}
+
+export async function saveSessionAttendance(id, records) {
+    const response = await api.put(`/attendance/sessions/${id}/records`, { records });
+    return response.data;
+}
+
+export async function updateAttendanceSessionStatus(id, status) {
+    const response = await api.patch(`/attendance/sessions/${id}/status`, { status });
+    return response.data;
+}
+
+export async function getBatchAttendanceReport(batchId) {
+    const response = await api.get(`/attendance/reports/batches/${batchId}`);
+    return response.data;
+}
+
+export async function getChildrenAttendance() {
+    const response = await api.get("/attendance/parents/children");
+    return response.data;
+}
+
+export async function getMyAttendance() {
+    const response = await api.get("/attendance/student/me");
+    return response.data;
+}
+
 export async function getMyTests() {
     const response = await api.get('/tests/my');
     return response.data;

@@ -10,6 +10,7 @@ import {
     BookOpen,
     Layers,
     FileText,
+    CalendarCheck,
     CreditCard,
     Settings,
     LogOut,
@@ -52,6 +53,11 @@ export default function InstituteLayout() {
             path: "/institute/batches",
             label: "Batches",
             icon: <Layers />,
+        },
+        {
+            path: "/institute/attendance",
+            label: "Attendance",
+            icon: <CalendarCheck />,
         },
         {
             path: "/institute/tests",

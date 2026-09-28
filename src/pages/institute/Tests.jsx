@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   createTest,
   getBatches,
@@ -21,7 +22,9 @@ const emptyQuestion = () => ({
   marks: 1,
 });
 
-export default function Tests() {
+export default function Tests({ createMode = false }) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [batches, setBatches] = useState([]);
   const [students, setStudents] = useState([]);
   const [toppers, setToppers] = useState([]);
@@ -31,7 +34,7 @@ export default function Tests() {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    totalMarks: 50,
+    totalMarks: '',
     durationMinutes: "",
     testDate: "",
     dueDate: "",
@@ -66,6 +69,13 @@ export default function Tests() {
   useEffect(() => {
     load();
   }, []);
+
+  useEffect(() => {
+    if (createMode && location.state?.editTestId) {
+      editTest(location.state.editTestId, false);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [createMode]);
 
   function updateQuestion(index, key, value) {
     setQuestions((current) =>
@@ -126,6 +136,7 @@ export default function Tests() {
       setQuestions([emptyQuestion()]);
       alert(editingTestId ? "Test updated" : "Test created and assigned");
       await load();
+      navigate("/institute/tests");
     } catch (e) {
       setError(e.response?.data?.message || "Could not create test");
     } finally {
@@ -141,7 +152,7 @@ export default function Tests() {
       setError(e.response?.data?.message || "Could not load test details");
     }
   }
-  async function editTest(id) {
+  async function editTest(id, goToForm = true) {
     setError("");
     try {
       const { data: test } = await getInstituteTest(id);
@@ -161,6 +172,7 @@ export default function Tests() {
       })));
       setEditingTestId(test.id);
       setSelectedTest(null);
+      if (goToForm) navigate("/institute/tests/create", { state: { editTestId: id } });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
       setError(e.response?.data?.message || "Could not load test for editing");
@@ -194,83 +206,98 @@ export default function Tests() {
     <div className="page">
       <div className="page-header">
         <div>
-          <h1>Tests</h1>
-          <p>Create a test with as many questions as you need and assign it to a batch or student.</p>
+          <h1>{createMode ? (editingTestId ? "Edit test" : "Create test") : "Tests"}</h1>
+          <p>{createMode ? "Add test details, questions, and assign it to students." : "Manage tests, assignments, and results."}</p>
         </div>
+        {createMode ? <Link className="button-link secondary-link" to="/institute/tests">Back to tests</Link> : <Link className="button-link" to="/institute/tests/create">Create Test</Link>}
       </div>
       {error && <div className="error">{error}</div>}
-      <div className="dashboard-card">
-        <h2>Latest toppers</h2>
-        {toppers.length ? (
-          <div className="table-card">
-            <table>
-              <thead>
-                <tr>
-                  <th>Test</th>
-                  <th>Student</th>
-                  <th>Marks</th>
-                  <th>Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {toppers.map((t, i) => (
-                  <tr key={`${t.test_id}-${i}`}>
-                    <td>{t.title}</td>
-                    <td>{t.topper_name}</td>
-                    <td>{t.marks_obtained}</td>
-                    <td>{Number(t.percentage).toFixed(1)}%</td>
+      {!createMode && <>
+        <div className="dashboard-card">
+          <h2>Latest toppers</h2>
+          {toppers.length ? (
+            <div className="table-card">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Test</th>
+                    <th>Student</th>
+                    <th>Marks</th>
+                    <th>Score</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p>No test results available yet.</p>
-        )}
-      </div>
-      <div className="dashboard-card">
-        <h2>Created tests</h2>
-        {tests.length ? <div className="table-card"><table><thead><tr><th>Test</th><th>Questions</th><th>Duration</th><th>Submissions</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-          {tests.map((test) => <tr key={test.id}>
-            <td><strong>{test.title}</strong><small>{test.description || ""}</small></td>
-            <td>{test.question_count}</td><td>{test.duration_minutes} min</td><td>{test.submission_count}</td><td>{test.status}</td>
-            <td><div className="action-row"><button type="button" onClick={() => viewTest(test.id)}>View</button><button type="button" onClick={() => editTest(test.id)} disabled={Number(test.submission_count) > 0 || Number(test.attempt_count) > 0}>Edit</button><button type="button" className="danger-button" onClick={() => removeTest(test.id)}>Delete</button>{test.status === "ACTIVE" && <button type="button" className="danger-button" onClick={() => closeTest(test.id)}>Deactivate</button>}</div></td>
-          </tr>)}
-        </tbody></table></div> : <p>No tests created yet.</p>}
-      </div>
-      {selectedTest && <div className="dashboard-card"><div className="action-row"><h2>{selectedTest.title}</h2><button type="button" onClick={() => setSelectedTest(null)}>Close</button></div><p>{selectedTest.description || "No description"}</p><p>{selectedTest.total_marks} marks · {selectedTest.duration_minutes} minutes · {selectedTest.status}</p><h3>Questions</h3>{selectedTest.questions?.map((q, index) => <section className="question-editor" key={q.id}><strong>{index + 1}. {q.question}</strong><p>A. {q.option_a} · B. {q.option_b} · C. {q.option_c} · D. {q.option_d}</p><small>Correct: {q.correct_option} · {q.marks} marks</small></section>)}</div>}
-      <form onSubmit={submit} className="dashboard-card">
-        <h2>{editingTestId ? "Edit test" : "Create test"}</h2>
+                </thead>
+                <tbody>
+                  {toppers.map((t, i) => (
+                    <tr key={`${t.test_id}-${i}`}>
+                      <td>{t.title}</td>
+                      <td>{t.topper_name}</td>
+                      <td>{t.marks_obtained}</td>
+                      <td>{Number(t.percentage).toFixed(1)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p>No test results available yet.</p>
+          )}
+        </div>
+        <div className="dashboard-card">
+          <h2>Created tests</h2>
+          {tests.length ? <div className="table-card"><table><thead><tr><th>Test</th><th>Questions</th><th>Duration</th><th>Submissions</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+            {tests.map((test) => <tr key={test.id}>
+              <td><strong>{test.title}</strong><small>{test.description || ""}</small></td>
+              <td>{test.question_count}</td><td>{test.duration_minutes} min</td><td>{test.submission_count}</td><td>{test.status}</td>
+              <td><div className="action-row"><button type="button" onClick={() => viewTest(test.id)}>View</button><button type="button" onClick={() => editTest(test.id)} disabled={Number(test.submission_count) > 0 || Number(test.attempt_count) > 0}>Edit</button><button type="button" className="danger-button" onClick={() => removeTest(test.id)}>Delete</button>{test.status === "ACTIVE" && <button type="button" className="danger-button" onClick={() => closeTest(test.id)}>Deactivate</button>}</div></td>
+            </tr>)}
+          </tbody></table></div> : <p>No tests created yet.</p>}
+        </div>
+        {selectedTest && <div className="dashboard-card"><div className="action-row"><h2>{selectedTest.title}</h2><button type="button" onClick={() => setSelectedTest(null)}>Close</button></div><p>{selectedTest.description || "No description"}</p><p>{selectedTest.total_marks} marks · {selectedTest.duration_minutes} minutes · {selectedTest.status}</p><h3>Questions</h3>{selectedTest.questions?.map((q, index) => <section className="question-editor" key={q.id}><strong>{index + 1}. {q.question}</strong><p>A. {q.option_a} · B. {q.option_b} · C. {q.option_c} · D. {q.option_d}</p><small>Correct: {q.correct_option} · {q.marks} marks</small></section>)}</div>}
+      </>}
+      {(createMode || editingTestId) && <form onSubmit={submit} className="dashboard-card">
+        {/* <h2>{editingTestId ? "Edit test" : "Create test"}</h2> */}
         <div className="form-grid">
-          <input
-            required
-            placeholder="Test title"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-          />
-          <input
-            placeholder="Description"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-          />
-          <input
-            required
-            type="number"
-            min="1"
-            placeholder="Total marks"
-            value={form.totalMarks}
-            onChange={(e) => setForm({ ...form, totalMarks: e.target.value })}
-          />
-          <input
-            required
-            type="number"
-            min="1"
-            placeholder="Duration (minutes)"
-            value={form.durationMinutes}
-            onChange={(e) =>
-              setForm({ ...form, durationMinutes: e.target.value })
-            }
-          />
+          <label>
+            Test Title
+            <input
+              required
+              placeholder="Test title"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+            />
+          </label>
+          <label>
+            Description
+            <input
+              placeholder="Description"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+          </label>
+          <label>
+            Total Marks
+            <input
+              required
+              type="number"
+              min="1"
+              placeholder="Total marks"
+              value={form.totalMarks}
+              onChange={(e) => setForm({ ...form, totalMarks: e.target.value })}
+            />
+          </label>
+          <label>
+            Duration (minutes)
+            <input
+              required
+              type="number"
+              min="1"
+              placeholder="Duration (minutes)"
+              value={form.durationMinutes}
+              onChange={(e) =>
+                setForm({ ...form, durationMinutes: e.target.value })
+              }
+            />
+          </label>
           <label>
             Test date
             <input
@@ -317,8 +344,16 @@ export default function Tests() {
           </label>
         </div>
         <div className="form-grid">
-          <label><input type="checkbox" checked={form.screenRecording} onChange={(e) => setForm({ ...form, screenRecording: e.target.checked })} /> Require screen recording</label>
-          <label><input type="checkbox" checked={form.autoSubmitOnLeave} onChange={(e) => setForm({ ...form, autoSubmitOnLeave: e.target.checked })} /> Auto-submit if student changes tab or leaves</label>
+          <div className="row_element">
+            <label className="vertical-align">
+              Require screen recording
+            </label>
+            <input type="checkbox" checked={form.screenRecording} onChange={(e) => setForm({ ...form, screenRecording: e.target.checked })} />
+          </div>
+          <div className="row_element">
+            <label className="vertical-align">Auto-submit if student changes tab or leaves</label>
+            <input type="checkbox" checked={form.autoSubmitOnLeave} onChange={(e) => setForm({ ...form, autoSubmitOnLeave: e.target.checked })} />
+          </div>
         </div>
         <div className="question-list">
           {questions.map((q, i) => (
@@ -330,6 +365,8 @@ export default function Tests() {
                 value={q.question}
                 onChange={(e) => updateQuestion(i, "question", e.target.value)}
               />
+              <br />
+              <br />
               <div className="form-grid">
                 {["optionA", "optionB", "optionC", "optionD"].map((key, j) => (
                   <input
@@ -353,7 +390,8 @@ export default function Tests() {
                     <option key={x}>{x}</option>
                   ))}
                 </select>
-              </label>{" "}
+              </label>
+              <br /><br />
               <label>
                 Marks
                 <input
@@ -366,12 +404,12 @@ export default function Tests() {
             </section>
           ))}
         </div>
-        <button type="button" onClick={() => setQuestions((current) => [...current, emptyQuestion()])}>Add question</button>
+        <button type="button" onClick={() => setQuestions((current) => [...current, emptyQuestion()])} className="right-space">Add question</button>
         {editingTestId && <button type="button" className="secondary-link" onClick={() => { setEditingTestId(null); setQuestions([emptyQuestion()]); setError(""); }}>Cancel edit</button>}
         <button disabled={saving}>
           {saving ? "Saving…" : editingTestId ? "Save changes" : "Create and assign test"}
         </button>
-      </form>
+      </form>}
     </div>
   );
 }
