@@ -26,8 +26,11 @@ import InstituteDashboard
   from "./pages/institute/Dashboard";
 
 import Students from "./pages/institute/Students";
+import CreateStudent from "./pages/institute/CreateStudent";
 import Courses from "./pages/institute/Courses";
+import CreateCourse from "./pages/institute/CreateCourse";
 import Batches from "./pages/institute/Batches";
+import CreateBatch from "./pages/institute/CreateBatch";
 import Subscription from "./pages/institute/Subscription";
 import Subscriptions from "./pages/super-admin/Subscriptions";
 import StudentLayout from "./layouts/StudentLayout";
@@ -197,16 +200,19 @@ export default function App() {
             path="students"
             element={<Students />}
           />
+          <Route path="students/create" element={<CreateStudent />} />
 
           <Route
             path="courses"
             element={<Courses />}
           />
+          <Route path="courses/create" element={<CreateCourse />} />
 
           <Route
             path="batches"
             element={<Batches />}
           />
+          <Route path="batches/create" element={<CreateBatch />} />
 
           <Route path="tests" element={<InstituteTests />} />
           <Route path="tests/create" element={<InstituteTests createMode />} />

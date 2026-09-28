@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
-    createCourse,
     getCourses,
     updateCourse,
     deleteCourse,
@@ -8,12 +8,6 @@ import {
 
 export default function Courses() {
     const [courses, setCourses] = useState([]);
-
-    const [name, setName] = useState("");
-    const [description, setDescription] =
-        useState("");
-
-    const [loading, setLoading] = useState(false);
 
     const loadCourses = async () => {
         try {
@@ -31,64 +25,13 @@ export default function Courses() {
         loadCourses();
     }, []);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!name.trim()) {
-            return;
-        }
-
-        try {
-            setLoading(true);
-
-            await createCourse({
-                name,
-                description,
-            });
-
-            setName("");
-            setDescription("");
-
-            await loadCourses();
-        } catch (error) {
-            alert(
-                error.response?.data?.message ||
-                "Failed to create course"
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
-
     return (
-        <div style={{ padding: 24 }}>
-            <h1>Courses</h1>
-
-            <form onSubmit={handleSubmit}>
-                <input
-                    value={name}
-                    onChange={(e) =>
-                        setName(e.target.value)
-                    }
-                    placeholder="Course name"
-                />
-
-                <input
-                    value={description}
-                    onChange={(e) =>
-                        setDescription(e.target.value)
-                    }
-                    placeholder="Description"
-                />
-
-                <button disabled={loading}>
-                    {loading ? "Creating..." : "Add Course"}
-                </button>
-            </form>
-
-            <hr />
-
-            <table width="100%">
+        <div className="page" style={{ padding: 24 }}>
+            <div className="page-header">
+                <div><h1>Courses</h1><p>Manage courses and their batches.</p></div>
+                <Link className="button-link" to="/institute/courses/create">Add Course</Link>
+            </div>
+            <div className="table-card"><table>
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -116,7 +59,7 @@ export default function Courses() {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </table></div>
         </div>
     );
 }
