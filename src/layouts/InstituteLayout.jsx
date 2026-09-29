@@ -74,6 +74,11 @@ export default function InstituteLayout() {
             icon: <CalendarCheck />,
         },
         {
+            path: "/institute/fees",
+            label: "Fees",
+            icon: <CreditCard />,
+        },
+        {
             path: "/institute/tests",
             label: "Tests",
             icon: <FileText />,

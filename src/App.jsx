@@ -42,7 +42,10 @@ import StudentTest from "./pages/student/Test";
 import StudentAttendance from "./pages/student/Attendance";
 import ParentAttendance from "./pages/parent/Attendance";
 import InstituteTests from "./pages/institute/Tests";
+import ViewTest from "./pages/institute/ViewTest";
+import AssignedTestStudents from "./pages/institute/AssignedTestStudents";
 import InstituteAttendance from "./pages/institute/Attendance";
+import InstituteFees from "./pages/institute/Fees";
 import CreateAttendanceSession from "./pages/institute/CreateAttendanceSession";
 import TakeAttendance from "./pages/institute/TakeAttendance";
 
@@ -153,6 +156,7 @@ export default function App() {
         <Route path="/teacher" element={<ProtectedRole role="TEACHER"><TeacherLayout /></ProtectedRole>}>
           <Route index element={<Navigate to="attendance" replace />} />
           <Route path="attendance" element={<InstituteAttendance />} />
+          <Route path="fees" element={<InstituteFees />} />
           <Route path="attendance/create" element={<CreateAttendanceSession />} />
           <Route path="attendance/session/:id" element={<TakeAttendance />} />
         </Route>
@@ -206,6 +210,7 @@ export default function App() {
             element={<Students />}
           />
           <Route path="students/create" element={<CreateStudent />} />
+          <Route path="students/:studentId/edit" element={<CreateStudent />} />
 
           <Route
             path="courses"
@@ -221,7 +226,10 @@ export default function App() {
 
           <Route path="tests" element={<InstituteTests />} />
           <Route path="tests/create" element={<InstituteTests createMode />} />
+          <Route path="tests/:testId/view" element={<ViewTest />} />
+          <Route path="tests/:testId/students" element={<AssignedTestStudents />} />
           <Route path="attendance" element={<InstituteAttendance />} />
+          <Route path="fees" element={<InstituteFees />} />
           <Route path="attendance/create" element={<CreateAttendanceSession />} />
           <Route path="attendance/session/:id" element={<TakeAttendance />} />
           <Route path="settings" element={<Settings />} />

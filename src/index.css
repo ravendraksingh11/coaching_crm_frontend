@@ -518,6 +518,36 @@ td small {
   width: 100%;
 }
 
+.assignment-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.assignment-filters .assignment-filter-active {
+  background: #1d4ed8;
+}
+
+.test-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.test-detail-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow-wrap: anywhere;
+}
+
+.test-detail-grid strong {
+  color: #6b7280;
+  font-size: 13px;
+}
+
 .settings-card h2 {
   margin-top: 0;
 }
@@ -613,6 +643,7 @@ td small {
   .pagination-controls { justify-content: center; }
   .settings-form, .password-settings-form { grid-template-columns: minmax(0, 1fr); }
   .settings-form button { justify-self: start; white-space: normal; }
+  .test-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .row_element{
   display: flex;

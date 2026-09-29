@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { deleteStudent, getStudents, updateStudent } from "../../api/institute.api";
+import { deleteStudent, getStudents } from "../../api/institute.api";
 
 export default function Students() {
   const [students, setStudents] = useState([]);
@@ -28,12 +28,7 @@ export default function Students() {
           <td>{student.name}</td><td>{student.admission_number}</td><td>{student.email}</td>
           <td>{student.phone || "-"}</td><td>{student.course_name || "-"}</td><td>{student.batch_name || "-"}</td>
           <td><div className="action-row">
-            <button type="button" className="secondary-button" onClick={async () => {
-              const name = window.prompt("Student name", student.name); if (name === null) return;
-              const admissionNumber = window.prompt("Admission number", student.admission_number); if (admissionNumber === null) return;
-              try { await updateStudent(student.id, { name, admissionNumber }); await loadData(); }
-              catch (error) { alert(error.response?.data?.message || "Could not update student"); }
-            }}>Edit</button>
+            <Link className="button-link secondary-link" to={`/institute/students/${student.id}/edit`}>Edit</Link>
             <button type="button" className="danger-button" onClick={async () => {
               if (!window.confirm(`Delete ${student.name}?`)) return;
               try { await deleteStudent(student.id); await loadData(); }

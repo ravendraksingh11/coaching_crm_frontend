@@ -30,7 +30,6 @@ export default function Tests({ createMode = false }) {
   const [toppers, setToppers] = useState([]);
   const [tests, setTests] = useState([]);
   const [editingTestId, setEditingTestId] = useState(null);
-  const [selectedTest, setSelectedTest] = useState(null);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -120,7 +119,6 @@ export default function Tests({ createMode = false }) {
       if (editingTestId) await updateInstituteTest(editingTestId, payload);
       else await createTest(payload);
       setEditingTestId(null);
-      setSelectedTest(null);
       setForm({
         title: "",
         description: "",
@@ -143,15 +141,6 @@ export default function Tests({ createMode = false }) {
       setSaving(false);
     }
   }
-  async function viewTest(id) {
-    setError("");
-    try {
-      const result = await getInstituteTest(id);
-      setSelectedTest(result.data);
-    } catch (e) {
-      setError(e.response?.data?.message || "Could not load test details");
-    }
-  }
   async function editTest(id, goToForm = true) {
     setError("");
     try {
@@ -171,7 +160,6 @@ export default function Tests({ createMode = false }) {
         correctOption: q.correct_option || "A", marks: q.marks || 1,
       })));
       setEditingTestId(test.id);
-      setSelectedTest(null);
       if (goToForm) navigate("/institute/tests/create", { state: { editTestId: id } });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
@@ -182,7 +170,6 @@ export default function Tests({ createMode = false }) {
     if (!window.confirm("Permanently delete this test and its questions and results?")) return;
     try {
       await deleteInstituteTest(id);
-      setSelectedTest(null);
       await load();
     } catch (e) {
       setError(e.response?.data?.message || "Could not delete test");
@@ -248,11 +235,10 @@ export default function Tests({ createMode = false }) {
             {tests.map((test) => <tr key={test.id}>
               <td><strong>{test.title}</strong><small>{test.description || ""}</small></td>
               <td>{test.question_count}</td><td>{test.duration_minutes} min</td><td>{test.submission_count}</td><td>{test.status}</td>
-              <td><div className="action-row"><button type="button" onClick={() => viewTest(test.id)}>View</button><button type="button" onClick={() => editTest(test.id)} disabled={Number(test.submission_count) > 0 || Number(test.attempt_count) > 0}>Edit</button><button type="button" className="danger-button" onClick={() => removeTest(test.id)}>Delete</button>{test.status === "ACTIVE" && <button type="button" className="danger-button" onClick={() => closeTest(test.id)}>Deactivate</button>}</div></td>
+            <td><div className="action-row"><Link className="button-link" to={`/institute/tests/${test.id}/view`}>View</Link><Link className="button-link secondary-link" to={`/institute/tests/${test.id}/students`}>Assign Student</Link><button type="button" onClick={() => editTest(test.id)} disabled={Number(test.submission_count) > 0 || Number(test.attempt_count) > 0}>Edit</button><button type="button" className="danger-button" onClick={() => removeTest(test.id)}>Delete</button>{test.status === "ACTIVE" && <button type="button" className="danger-button" onClick={() => closeTest(test.id)}>Deactivate</button>}</div></td>
             </tr>)}
           </tbody></table></div> : <p>No tests created yet.</p>}
         </div>
-        {selectedTest && <div className="dashboard-card"><div className="action-row"><h2>{selectedTest.title}</h2><button type="button" onClick={() => setSelectedTest(null)}>Close</button></div><p>{selectedTest.description || "No description"}</p><p>{selectedTest.total_marks} marks · {selectedTest.duration_minutes} minutes · {selectedTest.status}</p><h3>Questions</h3>{selectedTest.questions?.map((q, index) => <section className="question-editor" key={q.id}><strong>{index + 1}. {q.question}</strong><p>A. {q.option_a} · B. {q.option_b} · C. {q.option_c} · D. {q.option_d}</p><small>Correct: {q.correct_option} · {q.marks} marks</small></section>)}</div>}
       </>}
       {(createMode || editingTestId) && <form onSubmit={submit} className="dashboard-card">
         {/* <h2>{editingTestId ? "Edit test" : "Create test"}</h2> */}

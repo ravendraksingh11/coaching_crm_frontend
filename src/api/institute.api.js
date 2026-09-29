@@ -144,6 +144,11 @@ export async function getInstituteTests() {
     return response.data;
 }
 
+export async function getAssignedTestStudents(id) {
+    const response = await api.get(`/tests/manage/${id}/students`);
+    return response.data;
+}
+
 export async function getInstituteTest(id) {
     const response = await api.get(`/tests/manage/${id}`);
     return response.data;
@@ -191,6 +196,26 @@ export async function updateAttendanceSessionStatus(id, status) {
 
 export async function getBatchAttendanceReport(batchId) {
     const response = await api.get(`/attendance/reports/batches/${batchId}`);
+    return response.data;
+}
+
+export async function getPendingFees(frequency) {
+    const response = await api.get("/fees/pending", { params: frequency ? { frequency } : {} });
+    return response.data;
+}
+
+export async function getStudentFees(studentId) {
+    const response = await api.get(`/fees/students/${studentId}`);
+    return response.data;
+}
+
+export async function receiveFee(feeId, data = {}) {
+    const response = await api.patch(`/fees/${feeId}/receive`, data);
+    return response.data;
+}
+
+export async function getFeeSummary() {
+    const response = await api.get("/fees/summary");
     return response.data;
 }
 
