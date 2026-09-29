@@ -40,6 +40,8 @@ import TeacherLayout from "./layouts/TeacherLayout";
 import StudentTests from "./pages/student/Tests";
 import StudentTest from "./pages/student/Test";
 import StudentAttendance from "./pages/student/Attendance";
+import StudentTestResult from "./pages/student/TestResult";
+import StudentFees from "./pages/student/Fees";
 import ParentAttendance from "./pages/parent/Attendance";
 import InstituteTests from "./pages/institute/Tests";
 import ViewTest from "./pages/institute/ViewTest";
@@ -169,8 +171,10 @@ export default function App() {
         <Route path="/student" element={<ProtectedRole role="STUDENT"><StudentLayout /></ProtectedRole>}>
           <Route index element={<Navigate to="tests" replace />} />
           <Route path="tests" element={<StudentTests />} />
+          <Route path="tests/:id/result" element={<StudentTestResult />} />
           <Route path="tests/:id" element={<StudentTest />} />
           <Route path="attendance" element={<StudentAttendance />} />
+          <Route path="fees" element={<StudentFees />} />
         </Route>
 
 

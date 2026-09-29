@@ -219,6 +219,16 @@ export async function getFeeSummary() {
     return response.data;
 }
 
+export async function getPendingFeeSubmissions() {
+    const response = await api.get("/fees/submissions/pending");
+    return response.data;
+}
+
+export async function approveFeeSubmission(id) {
+    const response = await api.patch(`/fees/submissions/${id}/approve`);
+    return response.data;
+}
+
 export async function getChildrenAttendance() {
     const response = await api.get("/attendance/parents/children");
     return response.data;
@@ -246,5 +256,20 @@ export async function getAssignedTest(id) {
 
 export async function submitAssignedTest(id, answers) {
     const response = await api.post(`/tests/${id}/submit`, { answers });
+    return response.data;
+}
+
+export async function getAssignedTestResult(id) {
+    const response = await api.get(`/tests/${id}/result`);
+    return response.data;
+}
+
+export async function getMyFees() {
+    const response = await api.get("/fees/my");
+    return response.data;
+}
+
+export async function submitMyFeePayment(feeId, data) {
+    const response = await api.post(`/fees/${feeId}/submit`, data);
     return response.data;
 }

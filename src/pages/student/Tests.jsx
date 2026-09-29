@@ -78,7 +78,9 @@ export default function Tests() {
                     </span>
                   </td>
                   <td>
-                    {!test.submitted_at && (
+                    {test.submitted_at ? (
+                      <Link to={`/student/tests/${test.id}/result`} className="button-link">View</Link>
+                    ) : (
                       <Link
                         to={`/student/tests/${test.id}`}
                         className="button-link"

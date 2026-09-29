@@ -206,7 +206,7 @@ export default function Dashboard() {
         ))}
 
       </div>
-
+      <br />
       <div className="dashboard-card">
         <h2>Fee collection</h2>
         <div className="dashboard-grid">
