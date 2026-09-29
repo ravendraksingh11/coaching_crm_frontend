@@ -26,7 +26,7 @@ export default function Courses() {
     }, []);
 
     return (
-        <div className="page" style={{ padding: 24 }}>
+        <div className="page">
             <div className="page-header">
                 <div><h1>Courses</h1><p>Manage courses and their batches.</p></div>
                 <Link className="button-link" to="/institute/courses/create">Add Course</Link>

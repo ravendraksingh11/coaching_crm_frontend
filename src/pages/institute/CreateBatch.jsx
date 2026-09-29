@@ -47,7 +47,7 @@ export default function CreateBatch() {
   }
 
   return (
-    <div className="page" style={{ padding: 24 }}>
+    <div className="page">
       <div className="page-header">
         <div><h1>Create Batch</h1><p>Set up the course, dates, and class schedule.</p></div>
         <Link className="button-link secondary-link" to="/institute/batches">Back to batches</Link>

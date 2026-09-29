@@ -17,7 +17,7 @@ export default function Students() {
   useEffect(() => { loadData(); }, []);
 
   return (
-    <div className="page" style={{ padding: 24 }}>
+    <div className="page">
       <div className="page-header">
         <div><h1>Students</h1><p>Manage student records and batches.</p></div>
         <Link className="button-link" to="/institute/students/create">Add Student</Link>

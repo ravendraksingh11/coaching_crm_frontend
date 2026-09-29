@@ -32,7 +32,7 @@ export default function Batches() {
   if (loading) return <div>Loading batches...</div>;
 
   return (
-    <div className="page" style={{ padding: 24 }}>
+    <div className="page">
       <div className="page-header">
         <div><h1>Batches</h1><p>Manage class schedules and batch enrollment.</p></div>
         <Link className="button-link" to="/institute/batches/create">Create Batch</Link>

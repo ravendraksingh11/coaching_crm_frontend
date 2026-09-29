@@ -70,7 +70,7 @@ export default function SuperAdminLayout() {
                             to={item?.route}
                         >
                             {item?.icon}
-                            {item?.title}
+                            <span>{item?.title}</span>
                         </NavLink>
                     })}
 

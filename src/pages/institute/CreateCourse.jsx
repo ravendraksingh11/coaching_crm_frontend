@@ -23,7 +23,7 @@ export default function CreateCourse() {
   }
 
   return (
-    <div className="page" style={{ padding: 24 }}>
+    <div className="page">
       <div className="page-header">
         <div><h1>Add Course</h1><p>Enter the course details below.</p></div>
         <Link className="button-link secondary-link" to="/institute/courses">Back to courses</Link>
