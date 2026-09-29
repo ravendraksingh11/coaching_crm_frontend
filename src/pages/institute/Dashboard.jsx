@@ -18,6 +18,7 @@ import {
 
 import {
   getDashboard,
+  receiveFee,
 } from "../../api/institute.api";
 
 export default function Dashboard() {
@@ -49,6 +50,17 @@ export default function Dashboard() {
       );
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function markFeeReceived(fee) {
+    const amount = window.prompt(`Amount received (balance ₹${Number(fee.balance).toFixed(2)}):`, Number(fee.balance).toFixed(2));
+    if (amount === null) return;
+    try {
+      await receiveFee(fee.fee_id, { amount: Number(amount), paymentMethod: "CASH" });
+      await loadDashboard();
+    } catch (error) {
+      alert(error.response?.data?.message || "Could not record the fee payment");
     }
   }
 
@@ -110,7 +122,23 @@ export default function Dashboard() {
           .toLocaleString("en-IN")}`,
       icon: <CreditCard />,
     },
+    {
+      title: "One-time Pending",
+      value: `₹${Number(data.fees?.summary?.ONE_TIME?.pendingAmount || 0).toLocaleString("en-IN")}`,
+      icon: <CreditCard />,
+    },
+    {
+      title: "Monthly Pending",
+      value: `₹${Number(data.fees?.summary?.MONTHLY?.pendingAmount || 0).toLocaleString("en-IN")}`,
+      icon: <CreditCard />,
+    },
   ];
+
+  const feeSummary = data.fees?.summary || {};
+  const pendingFeeTotal = Number(feeSummary.ONE_TIME?.pendingAmount || 0) + Number(feeSummary.MONTHLY?.pendingAmount || 0);
+  const receivedFeeTotal = Number(feeSummary.ONE_TIME?.receivedAmount || 0) + Number(feeSummary.MONTHLY?.receivedAmount || 0);
+  const feeTotal = pendingFeeTotal + receivedFeeTotal;
+  const pendingFeePercent = feeTotal ? pendingFeeTotal * 100 / feeTotal : 0;
 
   const attendance =
     data.attendance;
@@ -177,6 +205,28 @@ export default function Dashboard() {
           </div>
         ))}
 
+      </div>
+
+      <div className="dashboard-card">
+        <h2>Fee collection</h2>
+        <div className="dashboard-grid">
+          <div>
+            <div aria-label={`Pending ${pendingFeePercent.toFixed(1)} percent, received ${(100 - pendingFeePercent).toFixed(1)} percent`} style={{ width: 180, height: 180, borderRadius: "50%", background: feeTotal ? `conic-gradient(#ef4444 0 ${pendingFeePercent}%, #22c55e ${pendingFeePercent}% 100%)` : "#e5e7eb", display: "grid", placeItems: "center" }}>
+              <div style={{ width: 112, height: 112, borderRadius: "50%", background: "white", display: "grid", placeItems: "center", textAlign: "center" }}><strong>{feeTotal ? `${pendingFeePercent.toFixed(0)}% pending` : "No fees"}</strong></div>
+            </div>
+            <p><span style={{ color: "#ef4444" }}>●</span> Pending {`₹${pendingFeeTotal.toLocaleString("en-IN")}`}</p>
+            <p><span style={{ color: "#22c55e" }}>●</span> Received {`₹${receivedFeeTotal.toLocaleString("en-IN")}`}</p>
+          </div>
+          {["ONE_TIME", "MONTHLY"].map((frequency) => {
+            const label = frequency === "ONE_TIME" ? "One-time pending" : "Monthly pending";
+            const records = frequency === "ONE_TIME" ? data.fees?.oneTimePending || [] : data.fees?.monthlyPending || [];
+            return <section className="dashboard-card" key={frequency}>
+              <h3>{label}</h3>
+              <p>{data.fees?.summary?.[frequency]?.pendingCount || 0} fee items · ₹{Number(data.fees?.summary?.[frequency]?.pendingAmount || 0).toLocaleString("en-IN")} due</p>
+              {records.length ? <div className="table-card"><table><thead><tr><th>Student</th><th>Due</th><th>Balance</th><th /></tr></thead><tbody>{records.map((fee) => <tr key={fee.fee_id}><td>{fee.student_name}<small>{fee.batch_name || fee.admission_number}</small></td><td>{fee.due_date ? String(fee.due_date).slice(0, 10) : "—"}</td><td>₹{Number(fee.balance).toLocaleString("en-IN")}</td><td><button type="button" onClick={() => markFeeReceived(fee)}>Receive</button></td></tr>)}</tbody></table></div> : <p>No pending fees.</p>}
+            </section>;
+          })}
+        </div>
       </div>
 
       <br />
