@@ -9,5 +9,5 @@ export default function TeacherLayout() {
     localStorage.removeItem("user");
     navigate("/login");
   }
-  return <div className="admin-layout"><aside className="sidebar"><div className="logo">Live Coach CRM</div><div className="role">TEACHER</div><nav><NavLink to="/teacher/attendance"><CalendarCheck /><span>Attendance</span></NavLink></nav><button className="logout" onClick={logout}><LogOut size={18} />Logout</button></aside><main className="main-content"><header className="topbar"><div>Teacher Portal</div><div>{user.name}</div></header><div className="content"><Outlet /></div></main></div>;
+  return <div className="admin-layout"><aside className="sidebar"><div className="logo">Shikvanta</div><div className="role">TEACHER</div><nav><NavLink to="/teacher/attendance"><CalendarCheck /><span>Attendance</span></NavLink></nav><button className="logout" onClick={logout}><LogOut size={18} />Logout</button></aside><main className="main-content"><header className="topbar"><div>Teacher Portal</div><div>{user.name}</div></header><div className="content"><Outlet /></div></main></div>;
 }

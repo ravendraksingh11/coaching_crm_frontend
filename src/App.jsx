@@ -50,6 +50,12 @@ import InstituteAttendance from "./pages/institute/Attendance";
 import InstituteFees from "./pages/institute/Fees";
 import CreateAttendanceSession from "./pages/institute/CreateAttendanceSession";
 import TakeAttendance from "./pages/institute/TakeAttendance";
+import PublicLayout from "./pages/public/PublicLayout";
+import Product from "./pages/public/Product";
+import About from "./pages/public/About";
+import Contact from "./pages/public/Contact";
+import { PrivacyPolicy, TermsAndConditions } from "./pages/public/LegalPages";
+import Enquiries from "./pages/super-admin/Enquiries";
 
 function ProtectedRole({
   role,
@@ -92,6 +98,20 @@ export default function App() {
     <BrowserRouter>
 
       <Routes>
+
+        <Route element={<PublicLayout />}>
+          <Route path="/shikvanta" element={<Product />} />
+          <Route path="/product" element={<Product />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        </Route>
+
+        <Route
+          path="/"
+          element={<Login />}
+        />
 
         <Route
           path="/login"
@@ -142,6 +162,11 @@ export default function App() {
             element={
               <Plans />
             }
+          />
+
+          <Route
+            path="enquiries"
+            element={<Enquiries />}
           />
 
           {/* <Route
@@ -254,7 +279,8 @@ export default function App() {
           path="*"
           element={
             <Navigate
-              to="/login"
+              to="/"
+              replace
             />
           }
         />

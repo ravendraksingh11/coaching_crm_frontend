@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { logo } from '../../assets'
 import { login } from "../../api/auth.api";
 
@@ -79,7 +79,7 @@ export default function Login() {
     <div className="login-page">
       <div className="login-card">
 
-        <img src={logo} />
+        <img src={logo} alt="Shikvanta" />
 
         {error && (
           <div className="error">
@@ -133,6 +133,11 @@ export default function Login() {
           </button>
 
         </form>
+
+        <p className="login-product-link">
+          Looking for product information?{" "}
+          <Link to="/shikvanta">Visit the Shikvanta product page</Link>
+        </p>
 
       </div>
     </div>

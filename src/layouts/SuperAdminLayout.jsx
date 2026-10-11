@@ -9,6 +9,7 @@ import {
     Building2,
     CreditCard,
     LogOut,
+    MessageSquareText,
 } from "lucide-react";
 
 export default function SuperAdminLayout() {
@@ -49,6 +50,11 @@ export default function SuperAdminLayout() {
         route: "/super-admin/subscriptions",
         icon: <CreditCard size={18} />
     },
+    {
+        title: "Product Enquiries",
+        route: "/super-admin/enquiries",
+        icon: <MessageSquareText size={18} />
+    },
     ]
 
     return (
@@ -57,7 +63,7 @@ export default function SuperAdminLayout() {
             <aside className="sidebar">
 
                 <div className="logo">
-                    Live Coach CRM
+                    Shikvanta
                 </div>
 
                 <div className="role">
@@ -67,6 +73,7 @@ export default function SuperAdminLayout() {
                 <nav>
                     {nav?.map(item => {
                         return <NavLink
+                            key={item.title}
                             to={item?.route}
                         >
                             {item?.icon}

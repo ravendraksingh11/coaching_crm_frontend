@@ -118,7 +118,7 @@ export default function Dashboard() {
           </h1>
 
           <p>
-            Welcome to Live Coach CRM
+            Welcome to Shikvanta
             Super Admin Panel
           </p>
         </div>

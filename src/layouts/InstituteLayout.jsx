@@ -108,7 +108,7 @@ export default function InstituteLayout() {
             <aside className="sidebar">
 
                 <div className="logo">
-                    Live Coach CRM
+                    Shikvanta
                 </div>
 
                 <div className="role">

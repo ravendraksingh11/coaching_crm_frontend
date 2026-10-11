@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getInstituteTest } from "../../api/institute.api";
+import QuestionContent from "../../components/QuestionContent";
 
 export default function ViewTest() {
   const { testId } = useParams();
@@ -40,7 +41,8 @@ export default function ViewTest() {
         <section className="dashboard-card">
           <h2>Questions ({test.questions?.length || 0})</h2>
           {test.questions?.map((question, index) => <article className="question-editor" key={question.id}>
-            <strong>{index + 1}. {question.question}</strong>
+            <strong>{index + 1}.</strong>
+            <QuestionContent content={question.question} />
             <p>A. {question.option_a} · B. {question.option_b} · C. {question.option_c} · D. {question.option_d}</p>
             <small>Correct answer: {question.correct_option} · {question.marks} marks</small>
           </article>)}

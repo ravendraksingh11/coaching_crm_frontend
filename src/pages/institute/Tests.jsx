@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import QuestionContent from "../../components/QuestionContent";
 import {
   createTest,
   getBatches,
@@ -80,6 +81,18 @@ export default function Tests({ createMode = false }) {
     setQuestions((current) =>
       current.map((q, i) => (i === index ? { ...q, [key]: value } : q)),
     );
+  }
+
+  function insertQuestionMarkup(index, markup) {
+    const field = document.querySelector(`[data-question-editor="${index}"]`);
+    const start = field?.selectionStart ?? questions[index]?.question?.length ?? 0;
+    const end = field?.selectionEnd ?? start;
+    const current = questions[index]?.question || "";
+    updateQuestion(index, "question", `${current.slice(0, start)}${markup}${current.slice(end)}`);
+    requestAnimationFrame(() => {
+      field?.focus();
+      field?.setSelectionRange(start + markup.length, start + markup.length);
+    });
   }
 
   async function submit(e) {
@@ -345,14 +358,24 @@ export default function Tests({ createMode = false }) {
           {questions.map((q, i) => (
             <section className="question-editor" key={i}>
               <h3>Question {i + 1}</h3>
-              <input
+              <div className="question-markup-tools" aria-label="Question formatting">
+                <button type="button" onClick={() => insertQuestionMarkup(i, "**bold text**")}>Bold</button>
+                <button type="button" onClick={() => insertQuestionMarkup(i, "## Heading\n")}>Heading</button>
+                <button type="button" onClick={() => insertQuestionMarkup(i, "- List item\n")}>List</button>
+                <button type="button" onClick={() => {
+                  const url = window.prompt("Enter an image URL");
+                  if (url?.trim()) insertQuestionMarkup(i, `\n![Image](${url.trim()})\n`);
+                }}>Insert image</button>
+              </div>
+              <textarea
                 required
-                placeholder="Question"
+                data-question-editor={i}
+                rows={5}
+                placeholder="Question (Markdown supported: **bold**, headings, lists, and ![alt](image URL))"
                 value={q.question}
                 onChange={(e) => updateQuestion(i, "question", e.target.value)}
               />
-              <br />
-              <br />
+              <small className="question-markup-help">Formatting is saved with the question and displayed to students.</small>
               <div className="form-grid">
                 {["optionA", "optionB", "optionC", "optionD"].map((key, j) => (
                   <input
