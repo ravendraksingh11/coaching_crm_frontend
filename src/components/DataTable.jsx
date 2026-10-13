@@ -59,10 +59,9 @@ export default function DataTable({
 
   const pageCount = Math.max(1, Math.ceil(filteredRows.length / pageSize));
   const currentPage = Math.min(page, pageCount);
-  const visibleRows = filteredRows.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize,
-  );
+  const visibleRows = showPagination
+    ? filteredRows.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    : filteredRows;
 
   function updateSearch(value) {
     setSearch(value);
@@ -148,8 +147,8 @@ export default function DataTable({
           </thead>
           <tbody>
             {visibleRows.length ? (
-              visibleRows.map((row) => (
-                <tr key={rowKey(row)}>
+              visibleRows.map((row, index) => (
+                <tr key={rowKey(row, index)}>
                   {columns.map((column) => (
                     <td key={column.key} className={column.cellClassName}>
                       {column.render

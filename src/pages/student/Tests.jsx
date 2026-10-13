@@ -51,9 +51,13 @@ export default function Tests() {
       key: "result",
       header: "Result",
       value: (test) =>
-        test.marks_obtained == null
-          ? "—"
-          : `${test.marks_obtained} / ${test.total_marks} (${Number(test.percentage).toFixed(1)}%)`,
+        test.result_available
+          ? `${test.marks_obtained} / ${test.total_marks} (${Number(test.percentage).toFixed(1)}%)`
+          : test.submitted_at && test.result_declaration_date
+            ? `Available on ${new Date(`${String(test.result_declaration_date).slice(0, 10)}T00:00:00`).toLocaleDateString()}`
+            : test.submitted_at
+              ? "Awaiting result"
+              : "—",
     },
     {
       key: "status",
@@ -72,10 +76,12 @@ export default function Tests() {
       searchable: false,
       value: () => "",
       render: (test) =>
-        test.submitted_at ? (
+        test.submitted_at && test.result_available ? (
           <Link to={`/student/tests/${test.id}/result`} className="button-link">
             View
           </Link>
+        ) : test.submitted_at ? (
+          <span>Result not declared</span>
         ) : (
           <Link to={`/student/tests/${test.id}`} className="button-link">
             Start test

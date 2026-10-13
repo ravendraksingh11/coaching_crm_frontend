@@ -1,3 +1,5 @@
+import DOMPurify from "dompurify";
+
 const IMAGE_PATTERN = /!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g;
 const INLINE_PATTERN = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
 
@@ -25,16 +27,38 @@ function textParts(text, keyPrefix) {
 }
 
 export default function QuestionContent({ content, as: Tag = "div", className = "" }) {
-  const lines = String(content || "").split(/\r?\n/);
-  return <Tag className={`question-content ${className}`.trim()}>{lines.map((line, index) => {
-    const heading = line.match(/^(#{1,3})\s+(.*)$/);
-    const listItem = line.match(/^[-*+]\s+(.*)$/);
-    const children = inlineParts(heading?.[2] ?? listItem?.[1] ?? line, `line-${index}`);
-    if (heading) {
-      const H = `h${heading[1].length}`;
-      return <H key={index}>{children}</H>;
-    }
-    if (listItem) return <div className="question-content-list-item" key={index}>{children}</div>;
-    return <p key={index}>{children.length ? children : <br />}</p>;
-  })}</Tag>;
+  const text = String(content || "");
+  if (/<\/?[a-z][\s\S]*>/i.test(text)) {
+    return (
+      <Tag
+        className={`question-content ${className}`.trim()}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(text) }}
+      />
+    );
+  }
+
+  const lines = text.split(/\r?\n/);
+  return (
+    <Tag className={`question-content ${className}`.trim()}>
+      {lines.map((line, index) => {
+        const heading = line.match(/^(#{1,3})\s+(.*)$/);
+        const listItem = line.match(/^[-*+]\s+(.*)$/);
+        const children = inlineParts(
+          heading?.[2] ?? listItem?.[1] ?? line,
+          `line-${index}`,
+        );
+        if (heading) {
+          const H = `h${heading[1].length}`;
+          return <H key={index}>{children}</H>;
+        }
+        if (listItem)
+          return (
+            <div className="question-content-list-item" key={index}>
+              {children}
+            </div>
+          );
+        return <p key={index}>{children.length ? children : <br />}</p>;
+      })}
+    </Tag>
+  );
 }

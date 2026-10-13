@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { CalendarCheck, LogOut } from "lucide-react";
+import { CalendarCheck, ChartNoAxesColumnIncreasing, LogOut } from "lucide-react";
 
 export default function ParentLayout() {
   const navigate = useNavigate();
@@ -9,5 +9,5 @@ export default function ParentLayout() {
     localStorage.removeItem("user");
     navigate("/login");
   }
-  return <div className="admin-layout"><aside className="sidebar"><div className="logo">Shikvanta</div><div className="role">PARENT</div><nav><NavLink to="/parent/attendance"><CalendarCheck /><span>Attendance</span></NavLink></nav><button className="logout" onClick={logout}><LogOut size={18} />Logout</button></aside><main className="main-content"><header className="topbar"><div>Parent Portal</div><div>{user.name}</div></header><div className="content"><Outlet /></div></main></div>;
+  return <div className="admin-layout"><aside className="sidebar"><div className="logo">Shikvanta</div><div className="role">PARENT</div><nav><NavLink to="/parent/attendance"><CalendarCheck /><span>Attendance</span></NavLink><NavLink to="/parent/performance"><ChartNoAxesColumnIncreasing /><span>Test Results</span></NavLink></nav><button className="logout" onClick={logout}><LogOut size={18} />Logout</button></aside><main className="main-content"><header className="topbar"><div>Parent Portal</div><div>{user.name}</div></header><div className="content"><Outlet /></div></main></div>;
 }

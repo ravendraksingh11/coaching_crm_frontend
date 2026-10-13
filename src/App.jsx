@@ -26,6 +26,7 @@ import InstituteDashboard
   from "./pages/institute/Dashboard";
 
 import Students from "./pages/institute/Students";
+import StudentRecord from "./pages/institute/StudentRecord";
 import CreateStudent from "./pages/institute/CreateStudent";
 import Courses from "./pages/institute/Courses";
 import CreateCourse from "./pages/institute/CreateCourse";
@@ -43,6 +44,7 @@ import StudentAttendance from "./pages/student/Attendance";
 import StudentTestResult from "./pages/student/TestResult";
 import StudentFees from "./pages/student/Fees";
 import ParentAttendance from "./pages/parent/Attendance";
+import ParentPerformance from "./pages/parent/Performance";
 import InstituteTests from "./pages/institute/Tests";
 import ViewTest from "./pages/institute/ViewTest";
 import AssignedTestStudents from "./pages/institute/AssignedTestStudents";
@@ -193,6 +195,7 @@ export default function App() {
         <Route path="/parent" element={<ProtectedRole role="PARENT"><ParentLayout /></ProtectedRole>}>
           <Route index element={<Navigate to="attendance" replace />} />
           <Route path="attendance" element={<ParentAttendance />} />
+          <Route path="performance" element={<ParentPerformance />} />
         </Route>
 
         <Route path="/student" element={<ProtectedRole role="STUDENT"><StudentLayout /></ProtectedRole>}>
@@ -241,6 +244,7 @@ export default function App() {
             element={<Students />}
           />
           <Route path="students/create" element={<CreateStudent />} />
+          <Route path="students/:studentId/record" element={<StudentRecord />} />
           <Route path="students/:studentId/edit" element={<CreateStudent />} />
 
           <Route

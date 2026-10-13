@@ -62,6 +62,14 @@ export default function AssignedTestStudents() {
           ? new Date(student.submitted_at).toLocaleString()
           : "—",
     },
+    {
+      key: "result",
+      header: "Result",
+      value: (student) =>
+        student.submitted_at && student.marks_obtained != null
+          ? `${student.marks_obtained} / ${student.total_marks} (${Number(student.percentage).toFixed(1)}%)`
+          : "—",
+    },
   ];
 
   return (

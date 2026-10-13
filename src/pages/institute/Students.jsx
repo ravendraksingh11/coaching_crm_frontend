@@ -45,6 +45,12 @@ export default function Students() {
       render: (student) => (
         <div className="action-row">
           <Link
+            className="button-link"
+            to={`/institute/students/${student.id}/record`}
+          >
+            View Record
+          </Link>
+          <Link
             className="button-link secondary-link"
             to={`/institute/students/${student.id}/edit`}
           >

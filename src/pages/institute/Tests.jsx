@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import QuestionContent from "../../components/QuestionContent";
+import JoditEditor from "jodit-react";
+import "jodit/es2021/jodit.min.css";
 import DataTable from "../../components/DataTable";
 import {
   createTest,
@@ -24,6 +25,13 @@ const emptyQuestion = () => ({
   marks: 1,
 });
 
+function hasQuestionContent(content) {
+  const document = new DOMParser().parseFromString(String(content || ""), "text/html");
+  return Boolean(
+    document.body.textContent.trim() || document.body.querySelector("img[src]"),
+  );
+}
+
 export default function Tests({ createMode = false }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -39,6 +47,7 @@ export default function Tests({ createMode = false }) {
     durationMinutes: "",
     testDate: "",
     dueDate: "",
+    resultDeclarationDate: "",
     screenRecording: false,
     autoSubmitOnLeave: false,
     batchId: "",
@@ -49,6 +58,32 @@ export default function Tests({ createMode = false }) {
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const questionEditorConfig = useMemo(
+    () => ({
+      readonly: false,
+      height: 260,
+      placeholder: "Write the question here...",
+      toolbarAdaptive: false,
+      buttons: [
+        "bold",
+        "italic",
+        "underline",
+        "|",
+        "ul",
+        "ol",
+        "|",
+        "image",
+        "link",
+        "|",
+        "undo",
+        "redo",
+      ],
+      uploader: {
+        insertImageAsBase64URI: true,
+      },
+    }),
+    [],
+  );
 
   async function load() {
     try {
@@ -84,18 +119,6 @@ export default function Tests({ createMode = false }) {
     );
   }
 
-  function insertQuestionMarkup(index, markup) {
-    const field = document.querySelector(`[data-question-editor="${index}"]`);
-    const start = field?.selectionStart ?? questions[index]?.question?.length ?? 0;
-    const end = field?.selectionEnd ?? start;
-    const current = questions[index]?.question || "";
-    updateQuestion(index, "question", `${current.slice(0, start)}${markup}${current.slice(end)}`);
-    requestAnimationFrame(() => {
-      field?.focus();
-      field?.setSelectionRange(start + markup.length, start + markup.length);
-    });
-  }
-
   async function submit(e) {
     e.preventDefault();
     setError("");
@@ -106,7 +129,7 @@ export default function Tests({ createMode = false }) {
     if (
       questions.some(
         (q) =>
-          !q.question.trim() ||
+          !hasQuestionContent(q.question) ||
           !q.optionA.trim() ||
           !q.optionB.trim() ||
           !q.optionC.trim() ||
@@ -140,6 +163,7 @@ export default function Tests({ createMode = false }) {
         durationMinutes: "",
         testDate: "",
         dueDate: "",
+        resultDeclarationDate: "",
         screenRecording: false,
         autoSubmitOnLeave: false,
         batchId: "",
@@ -165,6 +189,9 @@ export default function Tests({ createMode = false }) {
         totalMarks: test.total_marks, durationMinutes: test.duration_minutes || "",
         testDate: test.test_date ? String(test.test_date).slice(0, 10) : "",
         dueDate: assignment.dueDate ? String(assignment.dueDate).slice(0, 10) : "",
+        resultDeclarationDate: test.result_declaration_date
+          ? String(test.result_declaration_date).slice(0, 10)
+          : "",
         batchId: assignment.batchId || "", studentId: assignment.studentId || "",
         screenRecording: test.screen_recording, autoSubmitOnLeave: test.auto_submit_on_leave,
       });
@@ -243,6 +270,16 @@ export default function Tests({ createMode = false }) {
       key: "duration",
       header: "Duration",
       value: (test) => `${test.duration_minutes} min`,
+    },
+    {
+      key: "resultDeclaration",
+      header: "Result declaration",
+      value: (test) =>
+        test.result_declaration_date
+          ? new Date(
+              `${String(test.result_declaration_date).slice(0, 10)}T00:00:00`,
+            ).toLocaleDateString()
+          : "Immediately after submission",
     },
     {
       key: "submissions",
@@ -366,6 +403,16 @@ export default function Tests({ createMode = false }) {
             />
           </label>
           <label>
+            Result declaration date (optional)
+            <input
+              type="date"
+              value={form.resultDeclarationDate}
+              onChange={(e) =>
+                setForm({ ...form, resultDeclarationDate: e.target.value })
+              }
+            />
+          </label>
+          <label>
             Assign batch
             <select
               value={form.batchId}
@@ -410,24 +457,14 @@ export default function Tests({ createMode = false }) {
           {questions.map((q, i) => (
             <section className="question-editor" key={i}>
               <h3>Question {i + 1}</h3>
-              <div className="question-markup-tools" aria-label="Question formatting">
-                <button type="button" onClick={() => insertQuestionMarkup(i, "**bold text**")}>Bold</button>
-                <button type="button" onClick={() => insertQuestionMarkup(i, "## Heading\n")}>Heading</button>
-                <button type="button" onClick={() => insertQuestionMarkup(i, "- List item\n")}>List</button>
-                <button type="button" onClick={() => {
-                  const url = window.prompt("Enter an image URL");
-                  if (url?.trim()) insertQuestionMarkup(i, `\n![Image](${url.trim()})\n`);
-                }}>Insert image</button>
-              </div>
-              <textarea
-                required
-                data-question-editor={i}
-                rows={5}
-                placeholder="Question (Markdown supported: **bold**, headings, lists, and ![alt](image URL))"
+              <JoditEditor
                 value={q.question}
-                onChange={(e) => updateQuestion(i, "question", e.target.value)}
+                config={questionEditorConfig}
+                onBlur={(content) => updateQuestion(i, "question", content)}
               />
-              <small className="question-markup-help">Formatting is saved with the question and displayed to students.</small>
+              <small className="question-markup-help">
+                Format the question or insert an image using the editor toolbar.
+              </small>
               <div className="form-grid">
                 {["optionA", "optionB", "optionC", "optionD"].map((key, j) => (
                   <input

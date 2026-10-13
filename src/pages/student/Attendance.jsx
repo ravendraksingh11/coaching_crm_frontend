@@ -29,6 +29,6 @@ export default function Attendance() {
   if (!attendance) return <div className="page-loading">Loading attendance…</div>;
   return <div className="page"><div className="page-header"><div><h1>My Attendance</h1><p>Attendance across your completed class sessions</p></div></div>
     <div className="stats-grid"><div className="stat-card"><div><p>Attendance</p><h2>{attendance.percentage}%</h2></div></div><div className="stat-card"><div><p>Present</p><h2>{attendance.present}</h2></div></div><div className="stat-card"><div><p>Absent</p><h2>{attendance.absent}</h2></div></div><div className="stat-card"><div><p>Late</p><h2>{attendance.late}</h2></div></div><div className="stat-card"><div><p>Excused leave</p><h2>{attendance.leave}</h2></div></div></div>
-    <section className="dashboard-card"><h2>Recent sessions</h2>{attendance.recent.length ? <DataTable columns={columns} rows={attendance.recent} rowKey={(row) => `${row.batch_name}-${row.session_date}`} searchPlaceholder="Search sessions..." /> : <p>No attendance recorded yet.</p>}</section>
+    <section className="dashboard-card"><h2>Recent sessions</h2>{attendance.recent.length ? <DataTable columns={columns} rows={attendance.recent} rowKey={(row, index) => `${row.batch_name}-${row.session_date}-${index}`} searchPlaceholder="Search sessions..." /> : <p>No attendance recorded yet.</p>}</section>
   </div>;
 }

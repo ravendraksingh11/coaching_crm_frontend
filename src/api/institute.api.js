@@ -34,6 +34,11 @@ export async function getStudents() {
     return response.data;
 }
 
+export async function getStudentRecord(id) {
+    const response = await api.get(`/institute/students/${id}/record`);
+    return response.data;
+}
+
 export async function createStudent(data) {
     const response = await api.post(
         "/institute/students",
@@ -233,6 +238,11 @@ export async function approveFeeSubmission(id) {
 
 export async function getChildrenAttendance() {
     const response = await api.get("/attendance/parents/children");
+    return response.data;
+}
+
+export async function getChildrenPerformance() {
+    const response = await api.get("/parent/performance");
     return response.data;
 }
 
