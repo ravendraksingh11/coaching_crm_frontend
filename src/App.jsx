@@ -47,6 +47,7 @@ import InstituteTests from "./pages/institute/Tests";
 import ViewTest from "./pages/institute/ViewTest";
 import AssignedTestStudents from "./pages/institute/AssignedTestStudents";
 import InstituteAttendance from "./pages/institute/Attendance";
+import BatchAttendanceReport from "./pages/institute/BatchAttendanceReport";
 import InstituteFees from "./pages/institute/Fees";
 import CreateAttendanceSession from "./pages/institute/CreateAttendanceSession";
 import TakeAttendance from "./pages/institute/TakeAttendance";
@@ -183,6 +184,7 @@ export default function App() {
         <Route path="/teacher" element={<ProtectedRole role="TEACHER"><TeacherLayout /></ProtectedRole>}>
           <Route index element={<Navigate to="attendance" replace />} />
           <Route path="attendance" element={<InstituteAttendance />} />
+          <Route path="attendance/report" element={<BatchAttendanceReport />} />
           <Route path="fees" element={<InstituteFees />} />
           <Route path="attendance/create" element={<CreateAttendanceSession />} />
           <Route path="attendance/session/:id" element={<TakeAttendance />} />
@@ -258,6 +260,7 @@ export default function App() {
           <Route path="tests/:testId/view" element={<ViewTest />} />
           <Route path="tests/:testId/students" element={<AssignedTestStudents />} />
           <Route path="attendance" element={<InstituteAttendance />} />
+          <Route path="attendance/report" element={<BatchAttendanceReport />} />
           <Route path="fees" element={<InstituteFees />} />
           <Route path="attendance/create" element={<CreateAttendanceSession />} />
           <Route path="attendance/session/:id" element={<TakeAttendance />} />

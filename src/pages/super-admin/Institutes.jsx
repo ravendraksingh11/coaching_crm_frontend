@@ -7,6 +7,7 @@ import {
   updateInstituteStatus,
   deleteInstitute,
 } from "../../api/superAdmin.api";
+import DataTable from "../../components/DataTable";
 
 export default function Institutes() {
 
@@ -101,6 +102,89 @@ export default function Institutes() {
     }
   }
 
+  const columns = [
+    {
+      key: "institute",
+      header: "Institute",
+      value: (institute) => institute.name,
+      render: (institute) => (
+        <>
+          <strong>{institute.name}</strong>
+          <small>{institute.email}</small>
+        </>
+      ),
+    },
+    {
+      key: "location",
+      header: "Location",
+      value: (institute) =>
+        `${institute.city || ""}${institute.state ? `, ${institute.state}` : ""}`,
+    },
+    {
+      key: "students",
+      header: "Students",
+      value: (institute) => institute.student_count,
+    },
+    {
+      key: "teachers",
+      header: "Teachers",
+      value: (institute) => institute.teacher_count,
+    },
+    {
+      key: "plan",
+      header: "Plan",
+      value: (institute) => institute.plan_name || "No Plan",
+    },
+    {
+      key: "status",
+      header: "Status",
+      value: (institute) => institute.status,
+      render: (institute) => (
+        <span className={`status ${(institute.status || "").toLowerCase()}`}>
+          {institute.status}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      searchable: false,
+      sortable: false,
+      value: () => "",
+      render: (institute) => (
+        <div className="action-row">
+          <button type="button" className="secondary-button" onClick={async () => {
+            const name = window.prompt("Institute name", institute.name);
+            if (name === null) return;
+            try {
+              await updateInstitute(institute.id, { name });
+              await loadInstitutes();
+            } catch (error) {
+              alert(error.response?.data?.message || "Could not update institute");
+            }
+          }}>Edit name</button>
+          <button type="button" className="secondary-button" onClick={async () => {
+            const status = institute.status === "SUSPENDED" ? "ACTIVE" : "SUSPENDED";
+            try {
+              await updateInstituteStatus(institute.id, status);
+              await loadInstitutes();
+            } catch (error) {
+              alert(error.response?.data?.message || "Could not update status");
+            }
+          }}>{institute.status === "SUSPENDED" ? "Restore" : "Suspend"}</button>
+          <button type="button" className="danger-button" onClick={async () => {
+            if (!window.confirm(`Delete ${institute.name} and its tenant data?`)) return;
+            try {
+              await deleteInstitute(institute.id);
+              await loadInstitutes();
+            } catch (error) {
+              alert(error.response?.data?.message || "Could not delete institute");
+            }
+          }}>Delete</button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="page">
@@ -282,110 +366,13 @@ export default function Institutes() {
       )}
 
 
-      <div className="table-card">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Institute</th>
-              <th>Location</th>
-              <th>Students</th>
-              <th>Teachers</th>
-              <th>Plan</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            {institutes.map(
-              (institute) => (
-
-                <tr
-                  key={
-                    institute.id
-                  }
-                >
-
-                  <td>
-                    <strong>
-                      {institute.name}
-                    </strong>
-
-                    <small>
-                      {institute.email}
-                    </small>
-                  </td>
-
-                  <td>
-                    {institute.city}
-                    {institute.state
-                      ? `, ${institute.state}`
-                      : ""}
-                  </td>
-
-                  <td>
-                    {
-                      institute.student_count
-                    }
-                  </td>
-
-                  <td>
-                    {
-                      institute.teacher_count
-                    }
-                  </td>
-
-                  <td>
-                    {
-                      institute.plan_name ||
-                      "No Plan"
-                    }
-                  </td>
-
-                  <td>
-                    <span
-                      className={
-                        `status ${institute.status.toLowerCase()}`
-                      }
-                    >
-                      {
-                        institute.status
-                      }
-                    </span>
-                  </td>
-                  <td><div className="action-row">
-                    <button type="button" className="secondary-button" onClick={async () => {
-                      const name = window.prompt("Institute name", institute.name); if (name === null) return;
-                      try { await updateInstitute(institute.id, { name }); await loadInstitutes(); }
-                      catch (error) { alert(error.response?.data?.message || "Could not update institute"); }
-                    }}>Edit name</button>
-                    <button type="button" className="secondary-button" onClick={async () => {
-                      const status = institute.status === "SUSPENDED" ? "ACTIVE" : "SUSPENDED";
-                      try { await updateInstituteStatus(institute.id, status); await loadInstitutes(); }
-                      catch (error) { alert(error.response?.data?.message || "Could not update status"); }
-                    }}>{institute.status === "SUSPENDED" ? "Restore" : "Suspend"}</button>
-                    <button type="button" className="danger-button" onClick={async () => {
-                      if (!window.confirm(`Delete ${institute.name} and its tenant data?`)) return;
-                      try { await deleteInstitute(institute.id); await loadInstitutes(); }
-                      catch (error) { alert(error.response?.data?.message || "Could not delete institute"); }
-                    }}>Delete</button>
-                  </div></td>
-
-                </tr>
-
-              )
-            )}
-
-          </tbody>
-
-        </table>
-
-      </div>
+      <DataTable
+        columns={columns}
+        rows={institutes}
+        rowKey={(institute) => institute.id}
+        emptyMessage="No institutes found."
+        searchPlaceholder="Search institutes..."
+      />
 
     </div>
   );

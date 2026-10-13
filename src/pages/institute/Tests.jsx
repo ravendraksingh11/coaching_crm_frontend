@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import QuestionContent from "../../components/QuestionContent";
+import DataTable from "../../components/DataTable";
 import {
   createTest,
   getBatches,
@@ -202,6 +203,71 @@ export default function Tests({ createMode = false }) {
       setError(e.response?.data?.message || "Could not deactivate test");
     }
   }
+
+  const topperColumns = [
+    { key: "test", header: "Test", value: (topper) => topper.title },
+    {
+      key: "student",
+      header: "Student",
+      value: (topper) => topper.topper_name,
+    },
+    {
+      key: "marks",
+      header: "Marks",
+      value: (topper) => topper.marks_obtained,
+    },
+    {
+      key: "score",
+      header: "Score",
+      value: (topper) => `${Number(topper.percentage).toFixed(1)}%`,
+    },
+  ];
+  const testColumns = [
+    {
+      key: "title",
+      header: "Test",
+      value: (test) => test.title,
+      render: (test) => (
+        <>
+          <strong>{test.title}</strong>
+          <small>{test.description || ""}</small>
+        </>
+      ),
+    },
+    {
+      key: "questions",
+      header: "Questions",
+      value: (test) => test.question_count,
+    },
+    {
+      key: "duration",
+      header: "Duration",
+      value: (test) => `${test.duration_minutes} min`,
+    },
+    {
+      key: "submissions",
+      header: "Submissions",
+      value: (test) => test.submission_count,
+    },
+    { key: "status", header: "Status", value: (test) => test.status },
+    {
+      key: "actions",
+      header: "Actions",
+      searchable: false,
+      sortable: false,
+      value: () => "",
+      render: (test) => (
+        <div className="action-row">
+          <Link className="button-link" to={`/institute/tests/${test.id}/view`}>View</Link>
+          <Link className="button-link secondary-link" to={`/institute/tests/${test.id}/students`}>Assign Student</Link>
+          <button type="button" onClick={() => editTest(test.id)} disabled={Number(test.submission_count) > 0 || Number(test.attempt_count) > 0}>Edit</button>
+          <button type="button" className="danger-button" onClick={() => removeTest(test.id)}>Delete</button>
+          {test.status === "ACTIVE" && <button type="button" className="danger-button" onClick={() => closeTest(test.id)}>Deactivate</button>}
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="page">
       <div className="page-header">
@@ -216,41 +282,27 @@ export default function Tests({ createMode = false }) {
         <div className="dashboard-card">
           <h2>Latest toppers</h2>
           {toppers.length ? (
-            <div className="table-card">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Test</th>
-                    <th>Student</th>
-                    <th>Marks</th>
-                    <th>Score</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {toppers.map((t, i) => (
-                    <tr key={`${t.test_id}-${i}`}>
-                      <td>{t.title}</td>
-                      <td>{t.topper_name}</td>
-                      <td>{t.marks_obtained}</td>
-                      <td>{Number(t.percentage).toFixed(1)}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <DataTable
+              columns={topperColumns}
+              rows={toppers}
+              rowKey={(topper, index) => `${topper.test_id}-${index}`}
+              searchPlaceholder="Search toppers..."
+              showPagination={false}
+            />
           ) : (
             <p>No test results available yet.</p>
           )}
         </div>
         <div className="dashboard-card">
           <h2>Created tests</h2>
-          {tests.length ? <div className="table-card"><table><thead><tr><th>Test</th><th>Questions</th><th>Duration</th><th>Submissions</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-            {tests.map((test) => <tr key={test.id}>
-              <td><strong>{test.title}</strong><small>{test.description || ""}</small></td>
-              <td>{test.question_count}</td><td>{test.duration_minutes} min</td><td>{test.submission_count}</td><td>{test.status}</td>
-            <td><div className="action-row"><Link className="button-link" to={`/institute/tests/${test.id}/view`}>View</Link><Link className="button-link secondary-link" to={`/institute/tests/${test.id}/students`}>Assign Student</Link><button type="button" onClick={() => editTest(test.id)} disabled={Number(test.submission_count) > 0 || Number(test.attempt_count) > 0}>Edit</button><button type="button" className="danger-button" onClick={() => removeTest(test.id)}>Delete</button>{test.status === "ACTIVE" && <button type="button" className="danger-button" onClick={() => closeTest(test.id)}>Deactivate</button>}</div></td>
-            </tr>)}
-          </tbody></table></div> : <p>No tests created yet.</p>}
+          {tests.length ? (
+            <DataTable
+              columns={testColumns}
+              rows={tests}
+              rowKey={(test) => test.id}
+              searchPlaceholder="Search tests..."
+            />
+          ) : <p>No tests created yet.</p>}
         </div>
       </>}
       {(createMode || editingTestId) && <form onSubmit={submit} className="dashboard-card">

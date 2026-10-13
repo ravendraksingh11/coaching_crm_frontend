@@ -4,6 +4,7 @@ import {
   getPlans,
   assignLegacySubscription,
 } from "../../api/superAdmin.api";
+import DataTable from "../../components/DataTable";
 
 export default function Subscriptions() {
   const [institutes, setInstitutes] = useState([]);
@@ -52,6 +53,89 @@ export default function Subscriptions() {
       setSaving("");
     }
   }
+
+  const columns = [
+    {
+      key: "institute",
+      header: "Institute",
+      value: (institute) => institute.name,
+      render: (institute) => (
+        <>
+          <strong>{institute.name}</strong>
+          <small>{institute.email}</small>
+        </>
+      ),
+    },
+    {
+      key: "plan",
+      header: "Current plan",
+      value: (institute) => institute.plan_name || "No plan",
+    },
+    {
+      key: "status",
+      header: "Status",
+      value: (institute) => institute.status,
+      render: (institute) => (
+        <span className={`status ${(institute.status || "").toLowerCase()}`}>
+          {institute.status}
+        </span>
+      ),
+    },
+    {
+      key: "assign_plan",
+      header: "Assign active plan",
+      sortable: false,
+      value: () => "",
+      render: (institute) => (
+        <select
+          value={planByInstitute[institute.id] || ""}
+          onChange={(event) =>
+            setPlanByInstitute((value) => ({
+              ...value,
+              [institute.id]: event.target.value,
+            }))
+          }
+        >
+          <option value="">Select plan</option>
+          {plans.map((plan) => (
+            <option key={plan.id} value={plan.id}>
+              {plan.name} · ₹{plan.price}
+            </option>
+          ))}
+        </select>
+      ),
+    },
+    {
+      key: "start_date",
+      header: "Start date",
+      sortable: false,
+      searchable: false,
+      value: () => "",
+      render: () => (
+        <input
+          type="date"
+          value={startDate}
+          onChange={(event) => setStartDate(event.target.value)}
+        />
+      ),
+    },
+    {
+      key: "action",
+      header: "Action",
+      sortable: false,
+      searchable: false,
+      value: () => "",
+      render: (institute) => (
+        <button
+          disabled={saving === institute.id || !plans.length}
+          onClick={() => assign(institute.id)}
+        >
+          {saving === institute.id ? "Assigning…" : "Assign"}
+        </button>
+      ),
+    },
+  ];
+
   return (
     <div className="page">
       <div className="page-header">
@@ -65,74 +149,13 @@ export default function Subscriptions() {
       {loading ? (
         <div className="page-loading">Loading subscriptions…</div>
       ) : (
-        <div className="table-card">
-          <table>
-            <thead>
-              <tr>
-                <th>Institute</th>
-                <th>Current plan</th>
-                <th>Status</th>
-                <th>Assign active plan</th>
-                <th>Start date</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {institutes.map((i) => (
-                <tr key={i.id}>
-                  <td>
-                    <strong>{i.name}</strong>
-                    <small>{i.email}</small>
-                  </td>
-                  <td>{i.plan_name || "No plan"}</td>
-                  <td>
-                    <span
-                      className={`status ${(i.status || "").toLowerCase()}`}
-                    >
-                      {i.status}
-                    </span>
-                  </td>
-                  <td>
-                    <select
-                      value={planByInstitute[i.id] || ""}
-                      onChange={(e) =>
-                        setPlanByInstitute((v) => ({
-                          ...v,
-                          [i.id]: e.target.value,
-                        }))
-                      }
-                    >
-                      <option value="">Select plan</option>
-                      {plans.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name} · ₹{p.price}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      disabled={saving === i.id || !plans.length}
-                      onClick={() => assign(i.id)}
-                    >
-                      {saving === i.id ? "Assigning…" : "Assign"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {institutes.length === 0 && (
-            <p className="empty-state">No institutes found.</p>
-          )}
-        </div>
+        <DataTable
+          columns={columns}
+          rows={institutes}
+          rowKey={(institute) => institute.id}
+          emptyMessage="No institutes found."
+          searchPlaceholder="Search institutes..."
+        />
       )}
     </div>
   );

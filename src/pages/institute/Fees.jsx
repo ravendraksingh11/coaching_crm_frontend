@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DataTable from "../../components/DataTable";
 import { getPendingFees, getFeeSummary, receiveFee, getPendingFeeSubmissions, approveFeeSubmission } from "../../api/institute.api";
 
 function money(value) { return `₹${Number(value || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; }
@@ -26,12 +27,109 @@ export default function Fees() {
     try { await approveFeeSubmission(submission.id); await load(); }
     catch (e) { setError(e.response?.data?.message || "Could not confirm submitted payment"); }
   }
+
+  const submissionColumns = [
+    {
+      key: "student",
+      header: "Student",
+      value: (submission) => submission.student_name,
+      render: (submission) => (
+        <>
+          <strong>{submission.student_name}</strong>
+          <small>{submission.admission_number}</small>
+        </>
+      ),
+    },
+    { key: "fee", header: "Fee", value: (submission) => submission.fee_title },
+    {
+      key: "amount",
+      header: "Amount",
+      value: (submission) => money(submission.amount),
+    },
+    {
+      key: "method",
+      header: "Method",
+      value: (submission) => submission.payment_method,
+    },
+    {
+      key: "reference",
+      header: "Reference",
+      value: (submission) => submission.transaction_id || "—",
+    },
+    {
+      key: "submitted",
+      header: "Submitted",
+      value: (submission) => new Date(submission.created_at).toLocaleString(),
+    },
+    {
+      key: "action",
+      header: "Action",
+      sortable: false,
+      searchable: false,
+      value: () => "",
+      render: (submission) => (
+        <button type="button" onClick={() => confirmSubmission(submission)}>
+          Confirm received
+        </button>
+      ),
+    },
+  ];
+
+  const pendingFeeColumns = [
+    {
+      key: "student",
+      header: "Student",
+      value: (fee) => fee.student_name,
+      render: (fee) => (
+        <>
+          <strong>{fee.student_name}</strong>
+          <small>{fee.admission_number}</small>
+        </>
+      ),
+    },
+    {
+      key: "batch",
+      header: "Batch",
+      value: (fee) => fee.batch_name || "—",
+    },
+    {
+      key: "period",
+      header: "Period / Due date",
+      value: (fee) =>
+        `${fee.billing_period_start || fee.due_date || ""}${fee.due_date ? ` · due ${String(fee.due_date).slice(0, 10)}` : ""}`,
+    },
+    { key: "amount", header: "Fee", value: (fee) => money(fee.amount) },
+    {
+      key: "received",
+      header: "Received",
+      value: (fee) => money(fee.paid_amount),
+    },
+    {
+      key: "balance",
+      header: "Balance",
+      value: (fee) => money(fee.balance),
+    },
+    { key: "status", header: "Status", value: (fee) => fee.status },
+    {
+      key: "action",
+      header: "Action",
+      sortable: false,
+      searchable: false,
+      value: () => "",
+      render: (fee) => (
+        <button type="button" onClick={() => markReceived(fee)}>
+          Mark received
+        </button>
+      ),
+    },
+  ];
+
   return <div className="page"><div className="page-header"><div><h1>Fees</h1><p>Review one-time and monthly dues, and record payments received.</p></div><button type="button" onClick={() => load()}>Refresh</button></div>
     {error && <div className="error">{error}</div>}
     {summary && <div className="stats-grid"><div className="stat-card"><div><p>One-time pending</p><h2>{money(summary.ONE_TIME.pendingAmount)}</h2><small>{summary.ONE_TIME.pendingCount} fee items</small></div></div><div className="stat-card"><div><p>Monthly pending</p><h2>{money(summary.MONTHLY.pendingAmount)}</h2><small>{summary.MONTHLY.pendingCount} fee items</small></div></div></div>}
-    <section className="dashboard-card"><h2>Student payment submissions</h2>{submissions.length ? <div className="table-card"><table><thead><tr><th>Student</th><th>Fee</th><th>Amount</th><th>Method</th><th>Reference</th><th>Submitted</th><th>Action</th></tr></thead><tbody>{submissions.map((submission) => <tr key={submission.id}><td><strong>{submission.student_name}</strong><small>{submission.admission_number}</small></td><td>{submission.fee_title}</td><td>{money(submission.amount)}</td><td>{submission.payment_method}</td><td>{submission.transaction_id || "—"}</td><td>{new Date(submission.created_at).toLocaleString()}</td><td><button type="button" onClick={() => confirmSubmission(submission)}>Confirm received</button></td></tr>)}</tbody></table></div> : <p>No student payment submissions awaiting review.</p>}</section>
+    <section className="dashboard-card"><h2>Student payment submissions</h2>{submissions.length ? <DataTable columns={submissionColumns} rows={submissions} rowKey={(submission) => submission.id} searchPlaceholder="Search submissions..." /> : <p>No student payment submissions awaiting review.</p>}</section>
     <section className="dashboard-card"><div className="action-row"><h2>Pending {frequency === "ONE_TIME" ? "one-time" : "monthly"} fees</h2><div><button type="button" className={frequency === "ONE_TIME" ? "" : "secondary-button"} onClick={() => setFrequency("ONE_TIME")}>One-time</button> <button type="button" className={frequency === "MONTHLY" ? "" : "secondary-button"} onClick={() => setFrequency("MONTHLY")}>Monthly</button></div></div>
-      {loading ? <div className="page-loading">Loading fee records…</div> : fees.length ? <div className="table-card"><table><thead><tr><th>Student</th><th>Batch</th><th>Period / Due date</th><th>Fee</th><th>Received</th><th>Balance</th><th>Status</th><th>Action</th></tr></thead><tbody>{fees.map((fee) => <tr key={fee.fee_id}><td><strong>{fee.student_name}</strong><small>{fee.admission_number}</small></td><td>{fee.batch_name || "—"}</td><td>{fee.billing_period_start || fee.due_date}{fee.due_date ? ` · due ${String(fee.due_date).slice(0, 10)}` : ""}</td><td>{money(fee.amount)}</td><td>{money(fee.paid_amount)}</td><td>{money(fee.balance)}</td><td>{fee.status}</td><td><button type="button" onClick={() => markReceived(fee)}>Mark received</button></td></tr>)}</tbody></table></div> : <p>No pending fees in this category.</p>}
+      {loading ? <div className="page-loading">Loading fee records…</div> : fees.length ? <DataTable columns={pendingFeeColumns} rows={fees} rowKey={(fee) => fee.fee_id} searchPlaceholder="Search pending fees..." /> : <p>No pending fees in this category.</p>}
     </section>
   </div>;
 }

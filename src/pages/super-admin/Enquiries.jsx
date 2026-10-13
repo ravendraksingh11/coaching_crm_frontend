@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Mail, Phone, RefreshCw } from "lucide-react";
+import DataTable from "../../components/DataTable";
 import { getProductEnquiries, updateProductEnquiryStatus } from "../../api/enquiries.api";
 
 function formatDate(value) {
@@ -62,6 +63,81 @@ export default function Enquiries() {
     }
   }
 
+  const columns = [
+    {
+      key: "enquiry",
+      header: "Enquiry",
+      value: (enquiry) => `${enquiry.full_name} ${enquiry.enquiry}`,
+      cellClassName: "enquiries-message",
+      render: (enquiry) => (
+        <>
+          <strong>{enquiry.full_name}</strong>
+          <p>{enquiry.enquiry}</p>
+        </>
+      ),
+    },
+    {
+      key: "contact",
+      header: "Contact details",
+      value: (enquiry) => `${enquiry.email} ${enquiry.mobile}`,
+      render: (enquiry) => (
+        <>
+          <a
+            className="enquiry-admin-contact"
+            href={`mailto:${enquiry.email}`}
+          >
+            <Mail size={15} />
+            {enquiry.email}
+          </a>
+          <a
+            className="enquiry-admin-contact"
+            href={`tel:${enquiry.mobile}`}
+          >
+            <Phone size={15} />
+            {enquiry.mobile}
+          </a>
+        </>
+      ),
+    },
+    {
+      key: "received",
+      header: "Received",
+      value: (enquiry) => formatDate(enquiry.created_at),
+    },
+    {
+      key: "status",
+      header: "Status",
+      value: (enquiry) => enquiry.contacted ? "Contacted" : "Not contacted",
+      render: (enquiry) => (
+        <span
+          className={`enquiry-status ${enquiry.contacted ? "is-contacted" : "is-pending"}`}
+        >
+          {enquiry.contacted ? "Contacted" : "Not contacted"}
+        </span>
+      ),
+    },
+    {
+      key: "action",
+      header: "Action",
+      sortable: false,
+      searchable: false,
+      value: () => "",
+      render: (enquiry) => (
+        <button
+          className={enquiry.contacted ? "secondary-button" : ""}
+          onClick={() => toggleContacted(enquiry)}
+          disabled={updatingId === enquiry.id}
+        >
+          {updatingId === enquiry.id
+            ? "Saving…"
+            : enquiry.contacted
+              ? "Mark not contacted"
+              : "Mark contacted"}
+        </button>
+      ),
+    },
+  ];
+
   return (
     <div className="page">
       <div className="page-header">
@@ -87,34 +163,15 @@ export default function Enquiries() {
       ) : enquiries.length === 0 ? (
         <div className="dashboard-card empty-state">No product enquiries yet.</div>
       ) : (
-        <div className="table-card enquiries-table-card">
-          <table className="enquiries-table">
-            <thead>
-              <tr><th>Enquiry</th><th>Contact details</th><th>Received</th><th>Status</th><th>Action</th></tr>
-            </thead>
-            <tbody>
-              {enquiries.map((enquiry) => (
-                <tr key={enquiry.id}>
-                  <td className="enquiries-message">
-                    <strong>{enquiry.full_name}</strong>
-                    <p>{enquiry.enquiry}</p>
-                  </td>
-                  <td>
-                    <a className="enquiry-admin-contact" href={`mailto:${enquiry.email}`}><Mail size={15} />{enquiry.email}</a>
-                    <a className="enquiry-admin-contact" href={`tel:${enquiry.mobile}`}><Phone size={15} />{enquiry.mobile}</a>
-                  </td>
-                  <td>{formatDate(enquiry.created_at)}</td>
-                  <td><span className={`enquiry-status ${enquiry.contacted ? "is-contacted" : "is-pending"}`}>{enquiry.contacted ? "Contacted" : "Not contacted"}</span></td>
-                  <td>
-                    <button className={enquiry.contacted ? "secondary-button" : ""} onClick={() => toggleContacted(enquiry)} disabled={updatingId === enquiry.id}>
-                      {updatingId === enquiry.id ? "Saving…" : enquiry.contacted ? "Mark not contacted" : "Mark contacted"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={columns}
+          rows={enquiries}
+          rowKey={(enquiry) => enquiry.id}
+          emptyMessage="No product enquiries yet."
+          searchPlaceholder="Search enquiries..."
+          cardClassName="enquiries-table-card"
+          tableClassName="enquiries-table"
+        />
       )}
     </div>
   );

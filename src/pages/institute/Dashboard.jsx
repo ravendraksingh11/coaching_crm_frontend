@@ -20,6 +20,7 @@ import {
   getDashboard,
   receiveFee,
 } from "../../api/institute.api";
+import DataTable from "../../components/DataTable";
 
 export default function Dashboard() {
 
@@ -63,6 +64,42 @@ export default function Dashboard() {
       alert(error.response?.data?.message || "Could not record the fee payment");
     }
   }
+
+  const pendingFeeColumns = [
+    {
+      key: "student",
+      header: "Student",
+      value: (fee) => fee.student_name,
+      render: (fee) => (
+        <>
+          {fee.student_name}
+          <small>{fee.batch_name || fee.admission_number}</small>
+        </>
+      ),
+    },
+    {
+      key: "due",
+      header: "Due",
+      value: (fee) => fee.due_date ? String(fee.due_date).slice(0, 10) : "—",
+    },
+    {
+      key: "balance",
+      header: "Balance",
+      value: (fee) => `₹${Number(fee.balance).toLocaleString("en-IN")}`,
+    },
+    {
+      key: "action",
+      header: "Action",
+      searchable: false,
+      sortable: false,
+      value: () => "",
+      render: (fee) => (
+        <button type="button" onClick={() => markFeeReceived(fee)}>
+          Receive
+        </button>
+      ),
+    },
+  ];
 
   useEffect(() => {
     loadDashboard();
@@ -223,18 +260,18 @@ export default function Dashboard() {
             return <section className="dashboard-card" key={frequency}>
               <h3>{label}</h3>
               <p>{data.fees?.summary?.[frequency]?.pendingCount || 0} fee items · ₹{Number(data.fees?.summary?.[frequency]?.pendingAmount || 0).toLocaleString("en-IN")} due</p>
-              {records.length ? <div className="table-card"><table><thead><tr><th>Student</th><th>Due</th><th>Balance</th><th /></tr></thead><tbody>{records.map((fee) => <tr key={fee.fee_id}><td>{fee.student_name}<small>{fee.batch_name || fee.admission_number}</small></td><td>{fee.due_date ? String(fee.due_date).slice(0, 10) : "—"}</td><td>₹{Number(fee.balance).toLocaleString("en-IN")}</td><td><button type="button" onClick={() => markFeeReceived(fee)}>Receive</button></td></tr>)}</tbody></table></div> : <p>No pending fees.</p>}
+              {records.length ? <DataTable columns={pendingFeeColumns} rows={records} rowKey={(fee) => fee.fee_id} showSearch={false} showPagination={false} /> : <p>No pending fees.</p>}
             </section>;
           })}
         </div>
       </div>
 
       <br />
-      <div className="dashboard-card"><h2>Attendance</h2><p>Schedule class sessions and take batch attendance.</p><Link className="button-link" to="/institute/attendance">Manage attendance</Link></div>
+      {/* <div className="dashboard-card"><h2>Attendance</h2><p>Schedule class sessions and take batch attendance.</p><Link className="button-link" to="/institute/attendance">Manage attendance</Link></div> */}
 
-      <div className="dashboard-card"><h2>Tests</h2><p>Create tests, review questions, and manage assignments.</p><Link className="button-link" to="/institute/tests">Manage tests</Link></div>
+      {/* <div className="dashboard-card"><h2>Tests</h2><p>Create tests, review questions, and manage assignments.</p><Link className="button-link" to="/institute/tests">Manage tests</Link></div> */}
 
-      <div className="dashboard-grid">
+      {/* <div className="dashboard-grid">
 
         <div className="dashboard-card">
 
@@ -473,7 +510,7 @@ export default function Dashboard() {
 
         </table>
 
-      </div>
+      </div> */}
 
     </div>
   );

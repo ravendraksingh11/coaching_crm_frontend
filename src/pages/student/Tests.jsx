@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import DataTable from "../../components/DataTable";
 import { getMyTests } from "../../api/institute.api";
 
 export default function Tests() {
@@ -21,6 +22,68 @@ export default function Tests() {
   useEffect(() => {
     load();
   }, []);
+
+  const columns = [
+    {
+      key: "title",
+      header: "Test",
+      value: (test) => test.title,
+      render: (test) => (
+        <>
+          <strong>{test.title}</strong>
+          <small>{test.description || ""}</small>
+        </>
+      ),
+    },
+    {
+      key: "due",
+      header: "Due",
+      value: (test) =>
+        test.due_date ? new Date(test.due_date).toLocaleDateString() : "—",
+    },
+    {
+      key: "duration",
+      header: "Duration",
+      value: (test) =>
+        test.duration_minutes ? `${test.duration_minutes} min` : "—",
+    },
+    {
+      key: "result",
+      header: "Result",
+      value: (test) =>
+        test.marks_obtained == null
+          ? "—"
+          : `${test.marks_obtained} / ${test.total_marks} (${Number(test.percentage).toFixed(1)}%)`,
+    },
+    {
+      key: "status",
+      header: "Status",
+      value: (test) => test.submitted_at ? "Submitted" : "Not submitted",
+      render: (test) => (
+        <span className={`status ${test.submitted_at ? "active" : "trial"}`}>
+          {test.submitted_at ? "Submitted" : "Not submitted"}
+        </span>
+      ),
+    },
+    {
+      key: "action",
+      header: "Action",
+      sortable: false,
+      searchable: false,
+      value: () => "",
+      render: (test) =>
+        test.submitted_at ? (
+          <Link to={`/student/tests/${test.id}/result`} className="button-link">
+            View
+          </Link>
+        ) : (
+          <Link to={`/student/tests/${test.id}`} className="button-link">
+            Start test
+          </Link>
+        ),
+    },
+  ];
+
   return (
     <div className="page">
       <div className="page-header">
@@ -36,64 +99,12 @@ export default function Tests() {
       ) : tests.length === 0 ? (
         <div className="dashboard-card">No active tests assigned yet.</div>
       ) : (
-        <div className="table-card">
-          <table>
-            <thead>
-              <tr>
-                <th>Test</th>
-                <th>Due</th>
-                <th>Duration</th>
-                <th>Result</th>
-                <th>Status</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {tests.map((test) => (
-                <tr key={test.id}>
-                  <td>
-                    <strong>{test.title}</strong>
-                    <small>{test.description || ""}</small>
-                  </td>
-                  <td>
-                    {test.due_date
-                      ? new Date(test.due_date).toLocaleDateString()
-                      : "—"}
-                  </td>
-                  <td>
-                    {test.duration_minutes
-                      ? `${test.duration_minutes} min`
-                      : "—"}
-                  </td>
-                  <td>
-                    {test.marks_obtained == null
-                      ? "—"
-                      : `${test.marks_obtained} / ${test.total_marks} (${Number(test.percentage).toFixed(1)}%)`}
-                  </td>
-                  <td>
-                    <span
-                      className={`status ${test.submitted_at ? "active" : "trial"}`}
-                    >
-                      {test.submitted_at ? "Submitted" : "Not submitted"}
-                    </span>
-                  </td>
-                  <td>
-                    {test.submitted_at ? (
-                      <Link to={`/student/tests/${test.id}/result`} className="button-link">View</Link>
-                    ) : (
-                      <Link
-                        to={`/student/tests/${test.id}`}
-                        className="button-link"
-                      >
-                        Start test
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={columns}
+          rows={tests}
+          rowKey={(test) => test.id}
+          searchPlaceholder="Search tests..."
+        />
       )}
     </div>
   );

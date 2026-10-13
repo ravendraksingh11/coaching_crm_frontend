@@ -194,8 +194,10 @@ export async function updateAttendanceSessionStatus(id, status) {
     return response.data;
 }
 
-export async function getBatchAttendanceReport(batchId) {
-    const response = await api.get(`/attendance/reports/batches/${batchId}`);
+export async function getBatchAttendanceReport(batchId, name = "") {
+    const response = await api.get(`/attendance/reports/batches/${batchId}`, {
+        params: name ? { name } : {},
+    });
     return response.data;
 }
 

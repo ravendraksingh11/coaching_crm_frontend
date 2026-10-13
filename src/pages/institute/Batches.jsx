@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import DataTable from "../../components/DataTable";
 import { deleteBatch, getBatches, updateBatch } from "../../api/institute.api";
 
 export default function Batches() {
@@ -29,6 +30,65 @@ export default function Batches() {
     }
   }
 
+  const columns = [
+    { key: "name", header: "Batch", value: (batch) => batch.name },
+    {
+      key: "course",
+      header: "Course",
+      value: (batch) => batch.course_name || "No Course",
+    },
+    {
+      key: "schedule",
+      header: "Schedule",
+      value: (batch) =>
+        [batch.start_time, batch.end_time].filter(Boolean).join(" – ") || "-",
+    },
+    {
+      key: "room",
+      header: "Room",
+      value: (batch) => batch.room_number || "-",
+    },
+    {
+      key: "students",
+      header: "Students",
+      value: (batch) => batch.student_count || 0,
+    },
+    { key: "status", header: "Status", value: (batch) => batch.status },
+    {
+      key: "actions",
+      header: "Action",
+      sortable: false,
+      searchable: false,
+      render: (batch) => (
+        <div className="action-row">
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={async () => {
+              const name = window.prompt("Batch name", batch.name);
+              if (name === null) return;
+              try {
+                await updateBatch(batch.id, { name });
+                await loadBatches();
+              } catch (error) {
+                alert(error?.response?.data?.message || "Could not update batch");
+              }
+            }}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            className="danger-button"
+            onClick={() => handleDelete(batch.id)}
+          >
+            Delete
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   if (loading) return <div>Loading batches...</div>;
 
   return (
@@ -37,22 +97,13 @@ export default function Batches() {
         <div><h1>Batches</h1><p>Manage class schedules and batch enrollment.</p></div>
         <Link className="button-link" to="/institute/batches/create">Create Batch</Link>
       </div>
-      {batches.length === 0 ? <p>No batches found.</p> : <div className="table-card"><table>
-        <thead><tr><th>Batch</th><th>Course</th><th>Schedule</th><th>Room</th><th>Students</th><th>Status</th><th>Action</th></tr></thead>
-        <tbody>{batches.map((batch) => <tr key={batch.id}>
-          <td>{batch.name}</td><td>{batch.course_name || "No Course"}</td>
-          <td>{[batch.start_time, batch.end_time].filter(Boolean).join(" – ") || "-"}</td>
-          <td>{batch.room_number || "-"}</td><td>{batch.student_count || 0}</td><td>{batch.status}</td>
-          <td><div className="action-row">
-            <button type="button" className="secondary-button" onClick={async () => {
-              const name = window.prompt("Batch name", batch.name); if (name === null) return;
-              try { await updateBatch(batch.id, { name }); await loadBatches(); }
-              catch (error) { alert(error?.response?.data?.message || "Could not update batch"); }
-            }}>Edit</button>
-            <button type="button" className="danger-button" onClick={() => handleDelete(batch.id)}>Delete</button>
-          </div></td>
-        </tr>)}</tbody>
-      </table></div>}
+      <DataTable
+        columns={columns}
+        rows={batches}
+        rowKey={(batch) => batch.id}
+        emptyMessage="No batches found."
+        searchPlaceholder="Search batches..."
+      />
     </div>
   );
 }
