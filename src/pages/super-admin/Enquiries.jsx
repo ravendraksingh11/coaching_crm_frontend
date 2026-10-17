@@ -143,7 +143,7 @@ export default function Enquiries() {
       <div className="page-header">
         <div>
           <h1>Product enquiries</h1>
-          <p>Review and follow up on Shikvanta product enquiries.</p>
+          <p>Review and follow up on INSTITEXA product enquiries.</p>
         </div>
         <button
           className="refresh-button"

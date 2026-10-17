@@ -118,7 +118,7 @@ export default function Dashboard() {
           </h1>
 
           <p>
-            Welcome to Shikvanta
+            Welcome to INSTITEXA
             Super Admin Panel
           </p>
         </div>

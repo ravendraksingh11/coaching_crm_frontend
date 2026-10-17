@@ -108,7 +108,7 @@ export default function InstituteLayout() {
             <aside className="sidebar">
 
                 <div className="logo">
-                    Shikvanta
+                    INSTITEXA
                 </div>
 
                 <div className="role">

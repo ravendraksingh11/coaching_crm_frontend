@@ -38,7 +38,7 @@ export default function Product() {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    if (location.pathname === "/shikvanta" && location.hash === "#enquiry") {
+    if (location.pathname === "/institexa" && location.hash === "#enquiry") {
       requestAnimationFrame(() => {
         document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth" });
       });
@@ -77,7 +77,7 @@ export default function Product() {
             <span className="public-eyebrow"><span /> A simpler way to run your institute</span>
             <h1>More time for teaching.<br /><em>Less time on admin.</em></h1>
             <p>
-              Shikvanta brings your students, batches, attendance, tests, and fee
+              INSTITEXA brings your students, batches, attendance, tests, and fee
               tracking together—so your coaching institute can run smoothly every day.
             </p>
             <div className="product-hero-actions">
@@ -90,7 +90,7 @@ export default function Product() {
           </div>
           <div className="product-hero-art">
             <div className="hero-art-glow" />
-            <img src={logoHero} alt="Shikvanta coaching institute management" />
+            <img src={logoHero} alt="INSTITEXA coaching institute management" />
             <div className="hero-art-caption"><BookOpenCheck size={17} /> One connected place for your institute</div>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function Product() {
 
       <section className="public-section product-intro" id="features">
         <div className="public-section-heading">
-          <span className="public-eyebrow">THE SHIKVANTA PLATFORM</span>
+          <span className="public-eyebrow">THE INSTITEXA PLATFORM</span>
           <h2>All the essentials, <em>working together.</em></h2>
           <p>Spend less time switching between lists and more time supporting your students.</p>
         </div>
@@ -118,14 +118,14 @@ export default function Product() {
         <div className="product-benefit">
           <div className="product-benefit-icon"><ChartNoAxesCombined /></div>
           <div><strong>A clearer view of the whole institute</strong><p>Bring everyday operations into one organized workflow for your team.</p></div>
-          <Link to="/about">Get to know Shikvanta <ArrowRight size={17} /></Link>
+          <Link to="/about">Get to know INSTITEXA <ArrowRight size={17} /></Link>
         </div>
       </section>
 
       <section className="enquiry-section" id="enquiry">
         <div className="enquiry-copy">
           <span className="public-eyebrow">LET'S TALK</span>
-          <h2>Curious what Shikvanta can do for you?</h2>
+          <h2>Curious what INSTITEXA can do for you?</h2>
           <p>Tell us a little about what you need. Our team will get in touch to help you explore the product.</p>
           <div className="enquiry-contact">
             <MessageSquareText size={18} />
@@ -155,7 +155,7 @@ export default function Product() {
           </div>
           <label>
             Your enquiry
-            <textarea name="enquiry" minLength="5" maxLength="2000" rows="4" value={form.enquiry} onChange={updateField} placeholder="What would you like to know about Shikvanta?" required />
+            <textarea name="enquiry" minLength="5" maxLength="2000" rows="4" value={form.enquiry} onChange={updateField} placeholder="What would you like to know about INSTITEXA?" required />
           </label>
           <button className="public-button enquiry-submit" type="submit" disabled={submitting}>
             {submitting ? <><LoaderCircle className="spinning" size={18} /> Sending…</> : <>Submit enquiry <ArrowRight size={18} /></>}

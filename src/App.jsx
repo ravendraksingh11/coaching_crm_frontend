@@ -103,7 +103,7 @@ export default function App() {
       <Routes>
 
         <Route element={<PublicLayout />}>
-          <Route path="/shikvanta" element={<Product />} />
+          <Route path="/institexa" element={<Product />} />
           <Route path="/product" element={<Product />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

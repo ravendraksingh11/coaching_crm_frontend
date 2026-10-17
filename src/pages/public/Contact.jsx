@@ -7,7 +7,7 @@ export default function Contact() {
       <section className="public-page-hero">
         <span className="public-eyebrow">CONTACT US</span>
         <h1>We’re here to <em>help.</em></h1>
-        <p>Questions about Shikvanta or interested in learning more? Get in touch and we’ll be happy to hear from you.</p>
+        <p>Questions about INSTITEXA or interested in learning more? Get in touch and we’ll be happy to hear from you.</p>
       </section>
       <section className="contact-card">
         <div className="contact-card-icon"><Mail size={27} /></div>

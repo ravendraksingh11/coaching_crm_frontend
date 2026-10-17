@@ -63,7 +63,7 @@ export default function SuperAdminLayout() {
             <aside className="sidebar">
 
                 <div className="logo">
-                    Shikvanta
+                    INSTITEXA
                 </div>
 
                 <div className="role">

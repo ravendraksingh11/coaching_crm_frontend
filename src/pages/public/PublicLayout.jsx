@@ -4,7 +4,7 @@ import logo from "../../assets/logo.png";
 import EnquiryLink from "./EnquiryLink";
 
 const links = [
-  { to: "/shikvanta", label: "Product", end: true },
+  { to: "/institexa", label: "Product", end: true },
   { to: "/about", label: "About us" },
   { to: "/contact", label: "Contact" },
 ];
@@ -14,8 +14,9 @@ export default function PublicLayout() {
     <div className="public-site">
       <header className="public-header">
         <div className="public-header-inner">
-          <Link className="public-brand" to="/shikvanta" aria-label="Shikvanta home">
-            <img src={logo} alt="Shikvanta" />
+          <Link className="public-brand" to="/institexa" aria-label="INSTITEXA home">
+            <img src={logo} alt="" />
+            <span>INSTITEXA</span>
           </Link>
           <nav className="public-nav" aria-label="Main navigation">
             {links.map((link) => (
@@ -37,8 +38,9 @@ export default function PublicLayout() {
       <footer className="public-footer">
         <div className="public-footer-main">
           <div>
-            <Link className="public-brand" to="/shikvanta" aria-label="Shikvanta home">
-              <img src={logo} alt="Shikvanta" />
+            <Link className="public-brand" to="/institexa" aria-label="INSTITEXA home">
+              <img src={logo} alt="" />
+              <span>INSTITEXA</span>
             </Link>
             <p>Thoughtful tools for better-run coaching institutes.</p>
           </div>
@@ -53,7 +55,7 @@ export default function PublicLayout() {
           </a>
         </div>
         <div className="public-footer-bottom">
-          <span>© {new Date().getFullYear()} Shikvanta</span>
+          <span>© {new Date().getFullYear()} INSTITEXA</span>
           <span>Made for coaching institutes</span>
         </div>
       </footer>

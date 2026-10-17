@@ -79,7 +79,10 @@ export default function Login() {
     <div className="login-page">
       <div className="login-card">
 
-        <img src={logo} alt="Shikvanta" />
+        <div className="login-brand" aria-label="INSTITEXA">
+          <img src={logo} alt="" />
+          <span>INSTITEXA</span>
+        </div>
 
         {error && (
           <div className="error">
@@ -136,7 +139,7 @@ export default function Login() {
 
         <p className="login-product-link">
           Looking for product information?{" "}
-          <Link to="/shikvanta">Visit the Shikvanta product page</Link>
+          <Link to="/institexa">Visit the INSTITEXA product page</Link>
         </p>
 
       </div>

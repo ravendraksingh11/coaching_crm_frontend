@@ -4,14 +4,14 @@ export default function EnquiryLink({ children, ...props }) {
   const location = useLocation();
 
   function handleClick(event) {
-    if (location.pathname === "/shikvanta" && location.hash === "#enquiry") {
+    if (location.pathname === "/institexa" && location.hash === "#enquiry") {
       event.preventDefault();
       document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth" });
     }
   }
 
   return (
-    <Link to="/shikvanta#enquiry" onClick={handleClick} {...props}>
+    <Link to="/institexa#enquiry" onClick={handleClick} {...props}>
       {children}
     </Link>
   );

@@ -104,10 +104,8 @@ button:has(+ button) { margin-right: 20px; }
   border-radius: 14px;
   box-shadow: 0 10px 30px #00000012;
 }
-.login-card img{
-  width: 200px;
-  align-self: center;
-}
+.login-brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 20px; color: #12345a; font-size: 24px; font-weight: 800; letter-spacing: .04em; }
+.login-brand img { width: 56px; height: 56px; object-fit: contain; }
 
 .login-card h1 {
   margin-bottom: 5px;
@@ -930,8 +928,8 @@ td small {
   gap: 24px;
 }
 
-.public-brand { display: inline-flex; align-items: center; flex-shrink: 0; }
-.public-brand img { display: block; width: 174px; height: 48px; object-fit: contain; }
+.public-brand { display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0; color: #12345a; font-size: 18px; font-weight: 800; letter-spacing: .04em; text-decoration: none; }
+.public-brand img { display: block; width: 42px; height: 42px; object-fit: contain; }
 .public-nav { display: flex; align-items: center; justify-content: center; gap: 34px; }
 .public-nav a, .public-footer-links a {
   color: #506572;
@@ -1089,7 +1087,7 @@ td small {
 @keyframes public-spin { to { transform: rotate(360deg); } }
 .public-footer { padding: 43px 0 0; border-top: 1px solid #e7eeee; background: #fff; }
 .public-footer-main { display: grid; grid-template-columns: 1.1fr 1.3fr auto; align-items: center; gap: 35px; padding-bottom: 34px; }
-.public-footer-main .public-brand img { width: 154px; height: 42px; }
+.public-footer-main .public-brand img { width: 36px; height: 36px; }
 .public-footer-main > div:first-child > p { margin: 8px 0 0; color: var(--public-muted); font-size: 12px; }
 .public-footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 21px; }
 .public-footer-links a { font-size: 12px; }
@@ -1146,7 +1144,7 @@ td small {
   .public-header { position: relative; }
   .public-header-inner, .public-footer-main, .public-footer-bottom { width: min(100% - 32px, 1180px); }
   .public-header-inner { min-height: 70px; flex-wrap: wrap; gap: 0 14px; padding: 10px 0; }
-  .public-brand img { width: 140px; height: 40px; }
+  .public-brand img { width: 36px; height: 36px; }
   .public-nav { order: 3; width: 100%; justify-content: flex-start; gap: 23px; padding-top: 11px; }
   .public-nav a { font-size: 13px; }
   .public-header-cta { min-height: 39px; padding: 0 12px; font-size: 12px; }
