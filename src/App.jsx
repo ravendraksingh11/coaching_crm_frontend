@@ -46,6 +46,7 @@ import StudentFees from "./pages/student/Fees";
 import ParentAttendance from "./pages/parent/Attendance";
 import ParentPerformance from "./pages/parent/Performance";
 import InstituteTests from "./pages/institute/Tests";
+import ScanResults from "./pages/institute/ScanResults";
 import ViewTest from "./pages/institute/ViewTest";
 import AssignedTestStudents from "./pages/institute/AssignedTestStudents";
 import InstituteAttendance from "./pages/institute/Attendance";
@@ -261,6 +262,7 @@ export default function App() {
 
           <Route path="tests" element={<InstituteTests />} />
           <Route path="tests/create" element={<InstituteTests createMode />} />
+          <Route path="tests/scan-results" element={<ScanResults />} />
           <Route path="tests/:testId/view" element={<ViewTest />} />
           <Route path="tests/:testId/students" element={<AssignedTestStudents />} />
           <Route path="attendance" element={<InstituteAttendance />} />

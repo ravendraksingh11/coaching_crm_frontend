@@ -3,8 +3,8 @@ import axios from "axios";
 const api = axios.create({
     baseURL:
         import.meta.env.VITE_API_URL ||
-        // "http://localhost:5010/api",
-        "https://online-withdrawal-anna-soup.trycloudflare.com/api",
+        "http://localhost:5010",
+    // "https://online-withdrawal-anna-soup.trycloudflare.com/api",
     headers: {
         "Content-Type": "application/json",
     },
