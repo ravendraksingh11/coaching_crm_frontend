@@ -15,7 +15,7 @@ export default function Contact() {
           <span className="public-eyebrow">EMAIL OUR TEAM</span>
           <h2>Start a conversation</h2>
           <p>Send us a message about the product, a demo, or anything else you’d like to know.</p>
-          <a href="mailto:kavitac029@gmail.com">kavitac029@gmail.com <ArrowRight size={17} /></a>
+          <a href="mailto:institexa@gmail.com">institexa@gmail.com <ArrowRight size={17} /></a>
         </div>
         <MessageCircle className="contact-card-decoration" size={90} />
       </section>

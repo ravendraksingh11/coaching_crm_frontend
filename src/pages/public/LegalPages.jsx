@@ -17,7 +17,7 @@ export function PrivacyPolicy() {
         <h2>Your choices</h2>
         <p>You may contact us to ask about or request correction or deletion of information you submitted. We may need to retain information where required for legitimate business or legal purposes.</p>
         <h2>Contact</h2>
-        <p>For privacy questions, email <a href="mailto:kavitac029@gmail.com">kavitac029@gmail.com</a>.</p>
+        <p>For privacy questions, email <a href="mailto:institexa@gmail.com">institexa@gmail.com</a>.</p>
       </article>
     </div>
   );
@@ -42,7 +42,7 @@ export function TermsAndConditions() {
         <h2>Intellectual property</h2>
         <p>INSTITEXA’s website content, branding, and product materials are owned by or used with permission by INSTITEXA. You may not reproduce or distribute them without prior permission, except where applicable law allows.</p>
         <h2>Changes and contact</h2>
-        <p>We may update the website or these terms from time to time. For questions about these terms, email <a href="mailto:kavitac029@gmail.com">kavitac029@gmail.com</a>.</p>
+        <p>We may update the website or these terms from time to time. For questions about these terms, email <a href="mailto:institexa@gmail.com">institexa@gmail.com</a>.</p>
       </article>
     </div>
   );

@@ -50,8 +50,8 @@ export default function PublicLayout() {
             <Link to="/privacy-policy">Privacy policy</Link>
             <Link to="/terms-and-conditions">Terms &amp; conditions</Link>
           </div>
-          <a className="public-footer-email" href="mailto:kavitac029@gmail.com">
-            kavitac029@gmail.com
+          <a className="public-footer-email" href="mailto:institexa@gmail.com">
+            institexa@gmail.com
           </a>
         </div>
         <div className="public-footer-bottom">

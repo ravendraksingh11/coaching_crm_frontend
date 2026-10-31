@@ -129,7 +129,7 @@ export default function Product() {
           <p>Tell us a little about what you need. Our team will get in touch to help you explore the product.</p>
           <div className="enquiry-contact">
             <MessageSquareText size={18} />
-            <span>Prefer email? <a href="mailto:kavitac029@gmail.com">kavitac029@gmail.com</a></span>
+            <span>Prefer email? <a href="mailto:institexa@gmail.com">institexa@gmail.com</a></span>
           </div>
         </div>
         <form className="enquiry-form" onSubmit={handleSubmit}>
